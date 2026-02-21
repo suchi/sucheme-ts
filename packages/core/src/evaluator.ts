@@ -1,29 +1,29 @@
-import {
-  SchemeVal,
-  SchemeError,
-  SchemeProcedure,
-  SchemePrimitive,
-  SchemeMacro,
-  NIL,
-  TRUE,
-  FALSE,
-  UNDEFINED,
-  cons,
-  car,
-  cdr,
-  makeSymbol,
-  makeBoolean,
-  makeString,
-  makeNumber,
-  arrayToList,
-  listToArray,
-  isTruthy,
-  display,
-  write,
-  ContinuationError,
-} from "./types.js";
 import { Environment } from "./environment.js";
 import { applyMacro, parseSyntaxRules } from "./macros.js";
+import {
+  ContinuationError,
+  FALSE,
+  NIL,
+  SchemeError,
+  type SchemeMacro,
+  type SchemePrimitive,
+  type SchemeProcedure,
+  type SchemeVal,
+  TRUE,
+  UNDEFINED,
+  arrayToList,
+  car,
+  cdr,
+  cons,
+  display,
+  isTruthy,
+  listToArray,
+  makeBoolean,
+  makeNumber,
+  makeString,
+  makeSymbol,
+  write,
+} from "./types.js";
 
 // Evaluate an expression with TCO trampoline
 export function evaluate(expr: SchemeVal, env: Environment): SchemeVal {
@@ -32,7 +32,12 @@ export function evaluate(expr: SchemeVal, env: Environment): SchemeVal {
 
   while (true) {
     const result = evalStep(currentExpr, currentEnv);
-    if (result !== null && typeof result === "object" && "type" in result && result.type === "tail-call") {
+    if (
+      result !== null &&
+      typeof result === "object" &&
+      "type" in result &&
+      result.type === "tail-call"
+    ) {
       currentExpr = result.expr;
       currentEnv = result.env;
     } else {
@@ -66,7 +71,11 @@ function evalStep(expr: SchemeVal, env: Environment): SchemeVal {
   }
 }
 
-function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal {
+function evalPair(
+  head: SchemeVal,
+  tail: SchemeVal,
+  env: Environment,
+): SchemeVal {
   // Check for special forms
   if (head.type === "symbol") {
     const name = head.name;
@@ -74,7 +83,8 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
     switch (name) {
       case "quote": {
         const args = listToArray(tail);
-        if (args.length !== 1) throw new SchemeError("quote: expected 1 argument");
+        if (args.length !== 1)
+          throw new SchemeError("quote: expected 1 argument");
         return args[0];
       }
 
@@ -123,7 +133,8 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "when": {
         const args = listToArray(tail);
-        if (args.length < 2) throw new SchemeError("when: expected condition and body");
+        if (args.length < 2)
+          throw new SchemeError("when: expected condition and body");
         const cond = evaluate(args[0], env);
         if (isTruthy(cond)) {
           for (let i = 1; i < args.length - 1; i++) {
@@ -136,7 +147,8 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "unless": {
         const args = listToArray(tail);
-        if (args.length < 2) throw new SchemeError("unless: expected condition and body");
+        if (args.length < 2)
+          throw new SchemeError("unless: expected condition and body");
         const cond = evaluate(args[0], env);
         if (!isTruthy(cond)) {
           for (let i = 1; i < args.length - 1; i++) {
@@ -157,11 +169,14 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "define-syntax": {
         const args = listToArray(tail);
-        if (args.length !== 2) throw new SchemeError("define-syntax: expected name and transformer");
+        if (args.length !== 2)
+          throw new SchemeError("define-syntax: expected name and transformer");
         const nameExpr = args[0];
-        if (nameExpr.type !== "symbol") throw new SchemeError("define-syntax: name must be symbol");
+        if (nameExpr.type !== "symbol")
+          throw new SchemeError("define-syntax: name must be symbol");
         const transformer = evaluate(args[1], env);
-        if (transformer.type !== "macro") throw new SchemeError("define-syntax: expected macro transformer");
+        if (transformer.type !== "macro")
+          throw new SchemeError("define-syntax: expected macro transformer");
         const macro: SchemeMacro = { ...transformer, name: nameExpr.name };
         env.define(nameExpr.name, macro);
         return UNDEFINED;
@@ -179,8 +194,10 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "set!": {
         const args = listToArray(tail);
-        if (args.length !== 2) throw new SchemeError("set!: expected 2 arguments");
-        if (args[0].type !== "symbol") throw new SchemeError("set!: first argument must be symbol");
+        if (args.length !== 2)
+          throw new SchemeError("set!: expected 2 arguments");
+        if (args[0].type !== "symbol")
+          throw new SchemeError("set!: first argument must be symbol");
         const val = evaluate(args[1], env);
         env.set(args[0].name, val);
         return UNDEFINED;
@@ -217,7 +234,8 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "delay": {
         const args = listToArray(tail);
-        if (args.length !== 1) throw new SchemeError("delay: expected 1 argument");
+        if (args.length !== 1)
+          throw new SchemeError("delay: expected 1 argument");
         // Create a promise (thunk)
         const promiseExpr = args[0];
         const capturedEnv = env;
@@ -238,7 +256,8 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "force": {
         const args = listToArray(tail);
-        if (args.length !== 1) throw new SchemeError("force: expected 1 argument");
+        if (args.length !== 1)
+          throw new SchemeError("force: expected 1 argument");
         const promise = evaluate(args[0], env);
         if (promise.type === "primitive" && promise.name === "promise") {
           return promise.fn([], env);
@@ -248,7 +267,8 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "quasiquote": {
         const args = listToArray(tail);
-        if (args.length !== 1) throw new SchemeError("quasiquote: expected 1 argument");
+        if (args.length !== 1)
+          throw new SchemeError("quasiquote: expected 1 argument");
         return evalQuasiquote(args[0], env, 1);
       }
 
@@ -261,25 +281,29 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "call-with-values": {
         const args = listToArray(tail);
-        if (args.length !== 2) throw new SchemeError("call-with-values: expected 2 arguments");
+        if (args.length !== 2)
+          throw new SchemeError("call-with-values: expected 2 arguments");
         const producer = evaluate(args[0], env);
         const consumer = evaluate(args[1], env);
         const produced = applyProc(producer, [], env);
-        const producedArgs = produced.type === "values" ? produced.values : [produced];
+        const producedArgs =
+          produced.type === "values" ? produced.values : [produced];
         return applyProcTCO(consumer, producedArgs, env);
       }
 
       case "call-with-current-continuation":
       case "call/cc": {
         const args = listToArray(tail);
-        if (args.length !== 1) throw new SchemeError("call/cc: expected 1 argument");
+        if (args.length !== 1)
+          throw new SchemeError("call/cc: expected 1 argument");
         const proc = evaluate(args[0], env);
         return callCC(proc, env);
       }
 
       case "dynamic-wind": {
         const args = listToArray(tail);
-        if (args.length !== 3) throw new SchemeError("dynamic-wind: expected 3 arguments");
+        if (args.length !== 3)
+          throw new SchemeError("dynamic-wind: expected 3 arguments");
         const before = evaluate(args[0], env);
         const thunk = evaluate(args[1], env);
         const after = evaluate(args[2], env);
@@ -299,7 +323,8 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
 
       case "with-exception-handler": {
         const args = listToArray(tail);
-        if (args.length !== 2) throw new SchemeError("with-exception-handler: expected 2 arguments");
+        if (args.length !== 2)
+          throw new SchemeError("with-exception-handler: expected 2 arguments");
         const handler = evaluate(args[0], env);
         const thunk = evaluate(args[1], env);
         try {
@@ -319,7 +344,8 @@ function evalPair(head: SchemeVal, tail: SchemeVal, env: Environment): SchemeVal
       case "parameterize": {
         // Simple implementation - doesn't support dynamic binding properly
         const args = listToArray(tail);
-        if (args.length < 2) throw new SchemeError("parameterize: expected bindings and body");
+        if (args.length < 2)
+          throw new SchemeError("parameterize: expected bindings and body");
         const bindings = listToArray(args[0]);
         for (let i = 1; i < args.length - 1; i++) {
           evaluate(args[i], env);
@@ -380,7 +406,8 @@ function evalLambda(tail: SchemeVal, env: Environment): SchemeVal {
     const required: string[] = [];
     let current: SchemeVal = paramSpec;
     while (current.type === "pair") {
-      if (current.car.type !== "symbol") throw new SchemeError("lambda: parameter must be symbol");
+      if (current.car.type !== "symbol")
+        throw new SchemeError("lambda: parameter must be symbol");
       required.push(current.car.name);
       current = current.cdr;
     }
@@ -420,7 +447,8 @@ function evalDefine(tail: SchemeVal, env: Environment): SchemeVal {
   if (first.type === "pair") {
     // (define (name params...) body...)
     const nameSym = first.car;
-    if (nameSym.type !== "symbol") throw new SchemeError("define: procedure name must be symbol");
+    if (nameSym.type !== "symbol")
+      throw new SchemeError("define: procedure name must be symbol");
     const name = nameSym.name;
     const paramList = first.cdr;
     const body = listToArray(rest);
@@ -436,7 +464,8 @@ function evalDefine(tail: SchemeVal, env: Environment): SchemeVal {
       const required: string[] = [];
       let current: SchemeVal = paramList;
       while (current.type === "pair") {
-        if (current.car.type !== "symbol") throw new SchemeError("define: parameter must be symbol");
+        if (current.car.type !== "symbol")
+          throw new SchemeError("define: parameter must be symbol");
         required.push(current.car.name);
         current = current.cdr;
       }
@@ -449,7 +478,13 @@ function evalDefine(tail: SchemeVal, env: Environment): SchemeVal {
       throw new SchemeError("define: invalid parameter list");
     }
 
-    const proc: SchemeProcedure = { type: "procedure", params, body, env, name };
+    const proc: SchemeProcedure = {
+      type: "procedure",
+      params,
+      body,
+      env,
+      name,
+    };
     env.define(name, proc);
     return UNDEFINED;
   }
@@ -472,7 +507,8 @@ function evalLet(tail: SchemeVal, env: Environment): SchemeVal {
   const newEnv = new Environment(env);
   for (const binding of bindings) {
     const pair = listToArray(binding);
-    if (pair.length !== 2 || pair[0].type !== "symbol") throw new SchemeError("let: invalid binding");
+    if (pair.length !== 2 || pair[0].type !== "symbol")
+      throw new SchemeError("let: invalid binding");
     const val = evaluate(pair[1], env);
     newEnv.define(pair[0].name, val);
   }
@@ -483,7 +519,11 @@ function evalLet(tail: SchemeVal, env: Environment): SchemeVal {
   return makeTailCall(body[body.length - 1], newEnv);
 }
 
-function evalNamedLet(name: string, tail: SchemeVal, env: Environment): SchemeVal {
+function evalNamedLet(
+  name: string,
+  tail: SchemeVal,
+  env: Environment,
+): SchemeVal {
   const bindingsList = listToArray(car(tail));
   const body = listToArray(cdr(tail));
   if (body.length === 0) throw new SchemeError("named let: empty body");
@@ -493,13 +533,20 @@ function evalNamedLet(name: string, tail: SchemeVal, env: Environment): SchemeVa
 
   for (const binding of bindingsList) {
     const pair = listToArray(binding);
-    if (pair.length !== 2 || pair[0].type !== "symbol") throw new SchemeError("named let: invalid binding");
+    if (pair.length !== 2 || pair[0].type !== "symbol")
+      throw new SchemeError("named let: invalid binding");
     params.push(pair[0].name);
     initVals.push(evaluate(pair[1], env));
   }
 
   const loopEnv = new Environment(env);
-  const proc: SchemeProcedure = { type: "procedure", params, body, env: loopEnv, name };
+  const proc: SchemeProcedure = {
+    type: "procedure",
+    params,
+    body,
+    env: loopEnv,
+    name,
+  };
   loopEnv.define(name, proc);
 
   return applyProcTCO(proc, initVals, loopEnv);
@@ -515,7 +562,8 @@ function evalLetStar(tail: SchemeVal, env: Environment): SchemeVal {
   let newEnv = new Environment(env);
   for (const binding of bindings) {
     const pair = listToArray(binding);
-    if (pair.length !== 2 || pair[0].type !== "symbol") throw new SchemeError("let*: invalid binding");
+    if (pair.length !== 2 || pair[0].type !== "symbol")
+      throw new SchemeError("let*: invalid binding");
     const val = evaluate(pair[1], newEnv);
     const nextEnv = new Environment(newEnv);
     nextEnv.define(pair[0].name, val);
@@ -528,7 +576,11 @@ function evalLetStar(tail: SchemeVal, env: Environment): SchemeVal {
   return makeTailCall(body[body.length - 1], newEnv);
 }
 
-function evalLetrec(tail: SchemeVal, env: Environment, sequential: boolean): SchemeVal {
+function evalLetrec(
+  tail: SchemeVal,
+  env: Environment,
+  sequential: boolean,
+): SchemeVal {
   if (tail.type !== "pair") throw new SchemeError("letrec: invalid form");
 
   const bindings = listToArray(tail.car);
@@ -540,7 +592,8 @@ function evalLetrec(tail: SchemeVal, env: Environment, sequential: boolean): Sch
   // Define all variables as undefined first
   for (const binding of bindings) {
     const pair = listToArray(binding);
-    if (pair.length !== 2 || pair[0].type !== "symbol") throw new SchemeError("letrec: invalid binding");
+    if (pair.length !== 2 || pair[0].type !== "symbol")
+      throw new SchemeError("letrec: invalid binding");
     newEnv.define(pair[0].name, UNDEFINED);
   }
 
@@ -548,7 +601,10 @@ function evalLetrec(tail: SchemeVal, env: Environment, sequential: boolean): Sch
   for (const binding of bindings) {
     const pair = listToArray(binding);
     const val = evaluate(pair[1], newEnv);
-    newEnv.set(pair[0].name, val);
+    const sym = pair[0];
+    if (sym.type !== "symbol")
+      throw new SchemeError("letrec*: binding name must be a symbol");
+    newEnv.set(sym.name, val);
   }
 
   for (let i = 0; i < body.length - 1; i++) {
@@ -578,7 +634,11 @@ function evalCond(tail: SchemeVal, env: Environment): SchemeVal {
     if (isTruthy(val)) {
       if (parts.length === 1) return val;
       // Check for => syntax
-      if (parts.length === 3 && parts[1].type === "symbol" && parts[1].name === "=>") {
+      if (
+        parts.length === 3 &&
+        parts[1].type === "symbol" &&
+        parts[1].name === "=>"
+      ) {
         const proc = evaluate(parts[2], env);
         return applyProcTCO(proc, [val], env);
       }
@@ -642,7 +702,8 @@ function evalDo(tail: SchemeVal, env: Environment): SchemeVal {
 
   for (const spec of varSpecs) {
     const parts = listToArray(spec);
-    if (parts.length < 2 || parts[0].type !== "symbol") throw new SchemeError("do: invalid variable spec");
+    if (parts.length < 2 || parts[0].type !== "symbol")
+      throw new SchemeError("do: invalid variable spec");
     const name = parts[0].name;
     const init = evaluate(parts[1], env);
     const step = parts.length >= 3 ? parts[2] : null;
@@ -667,14 +728,20 @@ function evalDo(tail: SchemeVal, env: Environment): SchemeVal {
     }
 
     // Update vars
-    const newVals = vars.map((v) => (v.step ? evaluate(v.step, doEnv) : doEnv.lookup(v.name)));
+    const newVals = vars.map((v) =>
+      v.step ? evaluate(v.step, doEnv) : doEnv.lookup(v.name),
+    );
     for (let i = 0; i < vars.length; i++) {
       doEnv.define(vars[i].name, newVals[i]);
     }
   }
 }
 
-function evalLetSyntax(kind: string, tail: SchemeVal, env: Environment): SchemeVal {
+function evalLetSyntax(
+  kind: string,
+  tail: SchemeVal,
+  env: Environment,
+): SchemeVal {
   const args = listToArray(tail);
   if (args.length < 2) throw new SchemeError(`${kind}: invalid form`);
 
@@ -685,9 +752,14 @@ function evalLetSyntax(kind: string, tail: SchemeVal, env: Environment): SchemeV
 
   for (const binding of bindings) {
     const pair = listToArray(binding);
-    if (pair.length !== 2 || pair[0].type !== "symbol") throw new SchemeError(`${kind}: invalid binding`);
-    const transformer = evaluate(pair[1], kind === "letrec-syntax" ? newEnv : env);
-    if (transformer.type !== "macro") throw new SchemeError(`${kind}: expected macro transformer`);
+    if (pair.length !== 2 || pair[0].type !== "symbol")
+      throw new SchemeError(`${kind}: invalid binding`);
+    const transformer = evaluate(
+      pair[1],
+      kind === "letrec-syntax" ? newEnv : env,
+    );
+    if (transformer.type !== "macro")
+      throw new SchemeError(`${kind}: expected macro transformer`);
     newEnv.define(pair[0].name, { ...transformer, name: pair[0].name });
   }
 
@@ -745,7 +817,11 @@ function evalGuard(tail: SchemeVal, env: Environment): SchemeVal {
       const testVal = evaluate(parts[0], guardEnv);
       if (isTruthy(testVal)) {
         if (parts.length === 1) return testVal;
-        if (parts.length === 3 && parts[1].type === "symbol" && parts[1].name === "=>") {
+        if (
+          parts.length === 3 &&
+          parts[1].type === "symbol" &&
+          parts[1].name === "=>"
+        ) {
           const proc = evaluate(parts[2], guardEnv);
           return applyProc(proc, [testVal], guardEnv);
         }
@@ -764,10 +840,12 @@ function evalGuard(tail: SchemeVal, env: Environment): SchemeVal {
 function evalDefineRecordType(tail: SchemeVal, env: Environment): SchemeVal {
   // (define-record-type <name> (<constructor> <field>...) <predicate> (<field> <accessor> [<modifier>])...)
   const args = listToArray(tail);
-  if (args.length < 3) throw new SchemeError("define-record-type: invalid form");
+  if (args.length < 3)
+    throw new SchemeError("define-record-type: invalid form");
 
   const typeName = args[0];
-  if (typeName.type !== "symbol") throw new SchemeError("define-record-type: type name must be symbol");
+  if (typeName.type !== "symbol")
+    throw new SchemeError("define-record-type: type name must be symbol");
 
   const constructorSpec = listToArray(args[1]);
   if (constructorSpec.length < 1 || constructorSpec[0].type !== "symbol") {
@@ -776,27 +854,34 @@ function evalDefineRecordType(tail: SchemeVal, env: Environment): SchemeVal {
 
   const constructorName = constructorSpec[0].name;
   const constructorFields = constructorSpec.slice(1).map((f) => {
-    if (f.type !== "symbol") throw new SchemeError("define-record-type: field must be symbol");
+    if (f.type !== "symbol")
+      throw new SchemeError("define-record-type: field must be symbol");
     return f.name;
   });
 
   const predicateSym = args[2];
-  if (predicateSym.type !== "symbol") throw new SchemeError("define-record-type: predicate must be symbol");
+  if (predicateSym.type !== "symbol")
+    throw new SchemeError("define-record-type: predicate must be symbol");
   const predicateName = predicateSym.name;
 
   const fieldSpecs = args.slice(3);
-  const fields: Array<{ name: string; accessor: string; modifier?: string }> = [];
+  const fields: Array<{ name: string; accessor: string; modifier?: string }> =
+    [];
 
   for (const spec of fieldSpecs) {
     const parts = listToArray(spec);
-    if (parts.length < 2) throw new SchemeError("define-record-type: invalid field spec");
+    if (parts.length < 2)
+      throw new SchemeError("define-record-type: invalid field spec");
     if (parts[0].type !== "symbol" || parts[1].type !== "symbol") {
       throw new SchemeError("define-record-type: field spec must have symbols");
     }
     fields.push({
       name: parts[0].name,
       accessor: parts[1].name,
-      modifier: parts.length >= 3 && parts[2].type === "symbol" ? parts[2].name : undefined,
+      modifier:
+        parts.length >= 3 && parts[2].type === "symbol"
+          ? parts[2].name
+          : undefined,
     });
   }
 
@@ -808,7 +893,9 @@ function evalDefineRecordType(tail: SchemeVal, env: Environment): SchemeVal {
     name: constructorName,
     fn: (args) => {
       if (args.length !== constructorFields.length) {
-        throw new SchemeError(`${constructorName}: expected ${constructorFields.length} arguments`);
+        throw new SchemeError(
+          `${constructorName}: expected ${constructorFields.length} arguments`,
+        );
       }
       const record: Record<string, SchemeVal> = {};
       for (let i = 0; i < constructorFields.length; i++) {
@@ -829,7 +916,11 @@ function evalDefineRecordType(tail: SchemeVal, env: Environment): SchemeVal {
         __tag__: typeTag,
         __type__: typeName.name,
         __fields__: record,
-      } as SchemeVal & { __tag__: symbol; __type__: string; __fields__: Record<string, SchemeVal> };
+      } as SchemeVal & {
+        __tag__: symbol;
+        __type__: string;
+        __fields__: Record<string, SchemeVal>;
+      };
     },
   });
 
@@ -838,7 +929,8 @@ function evalDefineRecordType(tail: SchemeVal, env: Environment): SchemeVal {
     type: "primitive",
     name: predicateName,
     fn: (args) => {
-      if (args.length !== 1) throw new SchemeError(`${predicateName}: expected 1 argument`);
+      if (args.length !== 1)
+        throw new SchemeError(`${predicateName}: expected 1 argument`);
       const obj = args[0] as SchemeVal & { __tag__?: symbol };
       return makeBoolean(obj.__tag__ === typeTag);
     },
@@ -850,9 +942,14 @@ function evalDefineRecordType(tail: SchemeVal, env: Environment): SchemeVal {
       type: "primitive",
       name: field.accessor,
       fn: (args) => {
-        if (args.length !== 1) throw new SchemeError(`${field.accessor}: expected 1 argument`);
-        const obj = args[0] as SchemeVal & { __tag__?: symbol; __fields__?: Record<string, SchemeVal> };
-        if (obj.__tag__ !== typeTag) throw new SchemeError(`${field.accessor}: not a ${typeName.name}`);
+        if (args.length !== 1)
+          throw new SchemeError(`${field.accessor}: expected 1 argument`);
+        const obj = args[0] as SchemeVal & {
+          __tag__?: symbol;
+          __fields__?: Record<string, SchemeVal>;
+        };
+        if (obj.__tag__ !== typeTag)
+          throw new SchemeError(`${field.accessor}: not a ${typeName.name}`);
         return obj.__fields__?.[field.name] ?? UNDEFINED;
       },
     });
@@ -863,9 +960,14 @@ function evalDefineRecordType(tail: SchemeVal, env: Environment): SchemeVal {
         type: "primitive",
         name: modName,
         fn: (args) => {
-          if (args.length !== 2) throw new SchemeError(`${modName}: expected 2 arguments`);
-          const obj = args[0] as SchemeVal & { __tag__?: symbol; __fields__?: Record<string, SchemeVal> };
-          if (obj.__tag__ !== typeTag) throw new SchemeError(`${modName}: not a ${typeName.name}`);
+          if (args.length !== 2)
+            throw new SchemeError(`${modName}: expected 2 arguments`);
+          const obj = args[0] as SchemeVal & {
+            __tag__?: symbol;
+            __fields__?: Record<string, SchemeVal>;
+          };
+          if (obj.__tag__ !== typeTag)
+            throw new SchemeError(`${modName}: not a ${typeName.name}`);
           if (obj.__fields__) {
             obj.__fields__[field.name] = args[1];
           }
@@ -878,21 +980,35 @@ function evalDefineRecordType(tail: SchemeVal, env: Environment): SchemeVal {
   return UNDEFINED;
 }
 
-function evalQuasiquote(expr: SchemeVal, env: Environment, depth: number): SchemeVal {
+function evalQuasiquote(
+  expr: SchemeVal,
+  env: Environment,
+  depth: number,
+): SchemeVal {
   if (expr.type === "pair") {
     if (expr.car.type === "symbol" && expr.car.name === "unquote") {
       if (depth === 1) {
         return evaluate(car(cdr(expr)), env);
       }
-      return cons(makeSymbol("unquote"), cons(evalQuasiquote(car(cdr(expr)), env, depth - 1), NIL));
+      return cons(
+        makeSymbol("unquote"),
+        cons(evalQuasiquote(car(cdr(expr)), env, depth - 1), NIL),
+      );
     }
 
     if (expr.car.type === "symbol" && expr.car.name === "quasiquote") {
-      return cons(makeSymbol("quasiquote"), cons(evalQuasiquote(car(cdr(expr)), env, depth + 1), NIL));
+      return cons(
+        makeSymbol("quasiquote"),
+        cons(evalQuasiquote(car(cdr(expr)), env, depth + 1), NIL),
+      );
     }
 
     // Check for unquote-splicing in car
-    if (expr.car.type === "pair" && expr.car.car.type === "symbol" && expr.car.car.name === "unquote-splicing") {
+    if (
+      expr.car.type === "pair" &&
+      expr.car.car.type === "symbol" &&
+      expr.car.car.name === "unquote-splicing"
+    ) {
       if (depth === 1) {
         const spliced = evaluate(car(cdr(expr.car)), env);
         const rest = evalQuasiquote(expr.cdr, env, depth);
@@ -901,14 +1017,22 @@ function evalQuasiquote(expr: SchemeVal, env: Environment, depth: number): Schem
       }
     }
 
-    return cons(evalQuasiquote(expr.car, env, depth), evalQuasiquote(expr.cdr, env, depth));
+    return cons(
+      evalQuasiquote(expr.car, env, depth),
+      evalQuasiquote(expr.cdr, env, depth),
+    );
   }
 
   if (expr.type === "vector") {
     // Expand quasiquoted vector
     const elements: SchemeVal[] = [];
     for (const e of expr.elements) {
-      if (e.type === "pair" && e.car.type === "symbol" && e.car.name === "unquote-splicing" && depth === 1) {
+      if (
+        e.type === "pair" &&
+        e.car.type === "symbol" &&
+        e.car.name === "unquote-splicing" &&
+        depth === 1
+      ) {
         const spliced = evaluate(car(cdr(e)), env);
         // Add all elements from spliced
         let cur: SchemeVal = spliced;
@@ -932,7 +1056,11 @@ function appendLists(a: SchemeVal, b: SchemeVal): SchemeVal {
   return cons(a.car, appendLists(a.cdr, b));
 }
 
-export function applyProc(proc: SchemeVal, args: SchemeVal[], env: Environment): SchemeVal {
+export function applyProc(
+  proc: SchemeVal,
+  args: SchemeVal[],
+  env: Environment,
+): SchemeVal {
   if (proc.type === "primitive") {
     return proc.fn(args, env);
   }
@@ -953,7 +1081,11 @@ export function applyProc(proc: SchemeVal, args: SchemeVal[], env: Environment):
   throw new SchemeError(`Not a procedure: ${display(proc)}`);
 }
 
-function applyProcTCO(proc: SchemeVal, args: SchemeVal[], env: Environment): SchemeVal {
+function applyProcTCO(
+  proc: SchemeVal,
+  args: SchemeVal[],
+  env: Environment,
+): SchemeVal {
   if (proc.type === "primitive") {
     return proc.fn(args, env);
   }
@@ -1011,7 +1143,12 @@ function callCC(proc: SchemeVal, env: Environment): SchemeVal {
     type: "primitive",
     name: "continuation",
     fn: (args) => {
-      const val = args.length === 1 ? args[0] : args.length === 0 ? UNDEFINED : { type: "values" as const, values: args };
+      const val =
+        args.length === 1
+          ? args[0]
+          : args.length === 0
+            ? UNDEFINED
+            : { type: "values" as const, values: args };
       throw new ContinuationError(id, val);
     },
   };

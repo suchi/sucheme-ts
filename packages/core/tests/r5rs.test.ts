@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Interpreter } from "../src/interpreter.js";
 import { display } from "../src/types.js";
 
@@ -67,9 +67,9 @@ describe("R5RS Compliance Tests", () => {
     });
 
     it("string->number", () => {
-      expect(evalScheme("(string->number \"42\")")).toBe("42");
-      expect(evalScheme("(string->number \"ff\" 16)")).toBe("255");
-      expect(evalScheme("(string->number \"abc\")")).toBe("#f");
+      expect(evalScheme('(string->number "42")')).toBe("42");
+      expect(evalScheme('(string->number "ff" 16)')).toBe("255");
+      expect(evalScheme('(string->number "abc")')).toBe("#f");
     });
   });
 
@@ -110,7 +110,7 @@ describe("R5RS Compliance Tests", () => {
     it("association lists", () => {
       expect(evalScheme("(assq 'b '((a 1) (b 2) (c 3)))")).toBe("(b 2)");
       expect(evalScheme("(assv 2 '((1 a) (2 b) (3 c)))")).toBe("(2 b)");
-      expect(evalScheme("(assoc \"b\" '((\"a\" 1) (\"b\" 2)))")).toBe("(b 2)");
+      expect(evalScheme('(assoc "b" \'(("a" 1) ("b" 2)))')).toBe("(b 2)");
     });
   });
 
@@ -118,7 +118,7 @@ describe("R5RS Compliance Tests", () => {
     it("symbol operations", () => {
       expect(evalScheme("(symbol? 'foo)")).toBe("#t");
       expect(evalScheme("(symbol->string 'foo)")).toBe("foo");
-      expect(evalScheme("(string->symbol \"foo\")")).toBe("foo");
+      expect(evalScheme('(string->symbol "foo")')).toBe("foo");
     });
   });
 
@@ -133,10 +133,10 @@ describe("R5RS Compliance Tests", () => {
 
   describe("Section 6.7 - Strings", () => {
     it("string operations", () => {
-      expect(evalScheme("(string-length \"hello\")")).toBe("5");
-      expect(evalScheme("(string-ref \"hello\" 1)")).toBe("e");
-      expect(evalScheme("(string-append \"foo\" \"bar\")")).toBe("foobar");
-      expect(evalScheme("(string->list \"abc\")")).toBe("(a b c)");
+      expect(evalScheme('(string-length "hello")')).toBe("5");
+      expect(evalScheme('(string-ref "hello" 1)')).toBe("e");
+      expect(evalScheme('(string-append "foo" "bar")')).toBe("foobar");
+      expect(evalScheme('(string->list "abc")')).toBe("(a b c)");
       expect(evalScheme("(list->string '(#\\a #\\b #\\c))")).toBe("abc");
     });
   });
@@ -166,60 +166,75 @@ describe("R5RS Compliance Tests", () => {
     });
 
     it("call/cc", () => {
-      expect(evalScheme("(call-with-current-continuation (lambda (k) (k 42) 99))")).toBe("42");
+      expect(
+        evalScheme("(call-with-current-continuation (lambda (k) (k 42) 99))"),
+      ).toBe("42");
       expect(evalScheme("(call/cc (lambda (k) 99))")).toBe("99");
     });
 
     it("values and call-with-values", () => {
-      expect(evalScheme("(call-with-values (lambda () (values 1 2)) +)")).toBe("3");
-      expect(evalScheme("(call-with-values (lambda () 5) (lambda (x) (* x x)))")).toBe("25");
+      expect(evalScheme("(call-with-values (lambda () (values 1 2)) +)")).toBe(
+        "3",
+      );
+      expect(
+        evalScheme("(call-with-values (lambda () 5) (lambda (x) (* x x)))"),
+      ).toBe("25");
     });
   });
 
   describe("Tail call optimization", () => {
     it("mutual recursion with TCO", () => {
-      expect(evalScheme(`
+      expect(
+        evalScheme(`
         (define (even? n)
           (if (= n 0) #t (odd? (- n 1))))
         (define (odd? n)
           (if (= n 0) #f (even? (- n 1))))
         (even? 10000)
-      `)).toBe("#t");
+      `),
+      ).toBe("#t");
     });
 
     it("fibonacci with accumulator", () => {
-      expect(evalScheme(`
+      expect(
+        evalScheme(`
         (define (fib n acc1 acc2)
           (if (= n 0) acc1
             (fib (- n 1) acc2 (+ acc1 acc2))))
         (fib 20 0 1)
-      `)).toBe("6765");
+      `),
+      ).toBe("6765");
     });
   });
 
   describe("Macros - syntax-rules", () => {
     it("basic pattern matching", () => {
-      expect(evalScheme(`
+      expect(
+        evalScheme(`
         (define-syntax inc
           (syntax-rules ()
             ((_ x) (+ x 1))))
         (inc 5)
-      `)).toBe("6");
+      `),
+      ).toBe("6");
     });
 
     it("ellipsis in patterns", () => {
-      expect(evalScheme(`
+      expect(
+        evalScheme(`
         (define-syntax my-begin
           (syntax-rules ()
             ((_ e) e)
             ((_ e1 e2 ...)
              (let ((t e1)) (my-begin e2 ...)))))
         (my-begin 1 2 3)
-      `)).toBe("3");
+      `),
+      ).toBe("3");
     });
 
     it("nested macros", () => {
-      expect(evalScheme(`
+      expect(
+        evalScheme(`
         (define-syntax my-and
           (syntax-rules ()
             ((_) #t)
@@ -227,7 +242,8 @@ describe("R5RS Compliance Tests", () => {
             ((_ e1 e2 ...)
              (if e1 (my-and e2 ...) #f))))
         (my-and 1 2 3)
-      `)).toBe("3");
+      `),
+      ).toBe("3");
     });
   });
 
@@ -251,7 +267,9 @@ describe("R5RS Compliance Tests", () => {
     });
 
     it("sort", () => {
-      expect(evalScheme("(sort '(3 1 4 1 5 9 2 6) <)")).toBe("(1 1 2 3 4 5 6 9)");
+      expect(evalScheme("(sort '(3 1 4 1 5 9 2 6) <)")).toBe(
+        "(1 1 2 3 4 5 6 9)",
+      );
     });
   });
 });

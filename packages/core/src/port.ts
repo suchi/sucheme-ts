@@ -1,4 +1,4 @@
-import { SchemePort, SchemeError } from "./types.js";
+import { SchemeError, type SchemePort } from "./types.js";
 
 export function makeStringInputPort(s: string): SchemePort {
   let pos = 0;
@@ -20,7 +20,9 @@ export function makeStringInputPort(s: string): SchemePort {
   };
 }
 
-export function makeStringOutputPort(): SchemePort & { getOutput: () => string } {
+export function makeStringOutputPort(): SchemePort & {
+  getOutput: () => string;
+} {
   let output = "";
   return {
     type: "port",

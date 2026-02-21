@@ -1,21 +1,21 @@
-import { Lexer, Token, TokenType } from "./lexer.js";
+import { Lexer, type Token, type TokenType } from "./lexer.js";
 import {
-  SchemeVal,
-  SchemeError,
-  NIL,
-  TRUE,
   FALSE,
+  NIL,
+  SchemeError,
+  type SchemeVal,
+  TRUE,
+  arrayToList,
   cons,
+  makeChar,
   makeNumber,
   makeString,
   makeSymbol,
-  makeChar,
-  arrayToList,
 } from "./types.js";
 
 export class Parser {
   private tokens: Token[] = [];
-  private pos: number = 0;
+  private pos = 0;
 
   constructor(private source: string) {
     const lexer = new Lexer(source);
@@ -51,7 +51,9 @@ export class Parser {
   private expect(type: TokenType): Token {
     const tok = this.advance();
     if (tok.type !== type) {
-      throw new SchemeError(`Expected ${type} but got ${tok.type} ('${tok.value}') at line ${tok.line}`);
+      throw new SchemeError(
+        `Expected ${type} but got ${tok.type} ('${tok.value}') at line ${tok.line}`,
+      );
     }
     return tok;
   }
@@ -105,13 +107,16 @@ export class Parser {
       case "EOF":
         throw new SchemeError("Unexpected end of input");
       default:
-        throw new SchemeError(`Unexpected token: ${tok.value} at line ${tok.line}`);
+        throw new SchemeError(
+          `Unexpected token: ${tok.value} at line ${tok.line}`,
+        );
     }
   }
 
   private parseList(): SchemeVal {
     const openTok = this.advance(); // consume ( or [
-    const closeType: TokenType = openTok.type === "LBRACKET" ? "RBRACKET" : "RPAREN";
+    const closeType: TokenType =
+      openTok.type === "LBRACKET" ? "RBRACKET" : "RPAREN";
 
     const elements: SchemeVal[] = [];
     let dotted: SchemeVal | null = null;
@@ -126,7 +131,9 @@ export class Parser {
     }
 
     if (this.peek().type === "EOF") {
-      throw new SchemeError(`Unterminated list starting at line ${openTok.line}`);
+      throw new SchemeError(
+        `Unterminated list starting at line ${openTok.line}`,
+      );
     }
     this.advance(); // consume ) or ]
 
@@ -154,9 +161,10 @@ export class Parser {
 
 function parseNumber(raw: string): SchemeVal {
   // Handle special float values
-  if (raw === "+inf.0") return makeNumber(Infinity, false);
-  if (raw === "-inf.0") return makeNumber(-Infinity, false);
-  if (raw === "+nan.0" || raw === "-nan.0") return makeNumber(NaN, false);
+  if (raw === "+inf.0") return makeNumber(Number.POSITIVE_INFINITY, false);
+  if (raw === "-inf.0") return makeNumber(Number.NEGATIVE_INFINITY, false);
+  if (raw === "+nan.0" || raw === "-nan.0")
+    return makeNumber(Number.NaN, false);
 
   // Handle prefixed numbers
   if (raw.startsWith("#")) {
@@ -164,31 +172,35 @@ function parseNumber(raw: string): SchemeVal {
     const rest = raw.slice(2);
 
     if (prefix === "b") {
-      const n = parseInt(rest, 2);
-      if (isNaN(n)) throw new SchemeError(`Invalid binary number: ${raw}`);
+      const n = Number.parseInt(rest, 2);
+      if (Number.isNaN(n))
+        throw new SchemeError(`Invalid binary number: ${raw}`);
       return makeNumber(n, true);
     }
     if (prefix === "o") {
-      const n = parseInt(rest, 8);
-      if (isNaN(n)) throw new SchemeError(`Invalid octal number: ${raw}`);
+      const n = Number.parseInt(rest, 8);
+      if (Number.isNaN(n))
+        throw new SchemeError(`Invalid octal number: ${raw}`);
       return makeNumber(n, true);
     }
     if (prefix === "d") {
       return parseNumber(rest);
     }
     if (prefix === "x") {
-      const n = parseInt(rest, 16);
-      if (isNaN(n)) throw new SchemeError(`Invalid hex number: ${raw}`);
+      const n = Number.parseInt(rest, 16);
+      if (Number.isNaN(n)) throw new SchemeError(`Invalid hex number: ${raw}`);
       return makeNumber(n, true);
     }
     if (prefix === "e") {
       const inner = parseNumber(rest);
-      if (inner.type !== "number") throw new SchemeError(`Invalid exact number: ${raw}`);
+      if (inner.type !== "number")
+        throw new SchemeError(`Invalid exact number: ${raw}`);
       return makeNumber(Math.round(inner.value), true);
     }
     if (prefix === "i") {
       const inner = parseNumber(rest);
-      if (inner.type !== "number") throw new SchemeError(`Invalid inexact number: ${raw}`);
+      if (inner.type !== "number")
+        throw new SchemeError(`Invalid inexact number: ${raw}`);
       return makeNumber(inner.value, false);
     }
   }
@@ -196,18 +208,23 @@ function parseNumber(raw: string): SchemeVal {
   // Rational number
   if (raw.includes("/")) {
     const [num, den] = raw.split("/");
-    const n = parseFloat(num);
-    const d = parseFloat(den);
-    if (isNaN(n) || isNaN(d) || d === 0) throw new SchemeError(`Invalid rational: ${raw}`);
+    const n = Number.parseFloat(num);
+    const d = Number.parseFloat(den);
+    if (Number.isNaN(n) || Number.isNaN(d) || d === 0)
+      throw new SchemeError(`Invalid rational: ${raw}`);
     return makeNumber(n / d, true);
   }
 
   // Regular number
   const n = Number(raw);
-  if (isNaN(n) && raw !== "+nan.0" && raw !== "-nan.0") {
+  if (Number.isNaN(n) && raw !== "+nan.0" && raw !== "-nan.0") {
     throw new SchemeError(`Invalid number: ${raw}`);
   }
-  const exact = !raw.includes(".") && !raw.includes("e") && !raw.includes("E") && !raw.includes("n");
+  const exact =
+    !raw.includes(".") &&
+    !raw.includes("e") &&
+    !raw.includes("E") &&
+    !raw.includes("n");
   return makeNumber(n, exact);
 }
 
@@ -283,8 +300,8 @@ function parseChar(raw: string): SchemeVal {
   }
   // Hex character: #\x41
   if (name.toLowerCase().startsWith("x") && name.length > 1) {
-    const code = parseInt(name.slice(1), 16);
-    if (!isNaN(code)) {
+    const code = Number.parseInt(name.slice(1), 16);
+    if (!Number.isNaN(code)) {
       return makeChar(String.fromCharCode(code));
     }
   }

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Interpreter } from "../src/interpreter.js";
 import { display } from "../src/types.js";
 
@@ -136,7 +136,7 @@ describe("Evaluator - Comparison", () => {
 
   it("tests equal?", () => {
     expect(evalExpr("(equal? '(1 2 3) '(1 2 3))")).toBe("#t");
-    expect(evalExpr("(equal? \"hello\" \"hello\")")).toBe("#t");
+    expect(evalExpr('(equal? "hello" "hello")')).toBe("#t");
     expect(evalExpr("(equal? #(1 2) #(1 2))")).toBe("#t");
   });
 });
@@ -175,7 +175,9 @@ describe("Evaluator - Conditionals", () => {
   });
 
   it("evaluates case", () => {
-    expect(evalExpr("(case 2 ((1) 'one) ((2) 'two) (else 'other))")).toBe("two");
+    expect(evalExpr("(case 2 ((1) 'one) ((2) 'two) (else 'other))")).toBe(
+      "two",
+    );
     expect(evalExpr("(case 5 ((1 2 3) 'small) (else 'big))")).toBe("big");
   });
 
@@ -215,7 +217,11 @@ describe("Evaluator - Lambda", () => {
   });
 
   it("creates closures", () => {
-    expect(evalExpr("(define (make-adder n) (lambda (x) (+ x n))) ((make-adder 5) 3)")).toBe("8");
+    expect(
+      evalExpr(
+        "(define (make-adder n) (lambda (x) (+ x n))) ((make-adder 5) 3)",
+      ),
+    ).toBe("8");
   });
 });
 
@@ -229,11 +235,19 @@ describe("Evaluator - Let forms", () => {
   });
 
   it("evaluates letrec", () => {
-    expect(evalExpr("(letrec ((even? (lambda (n) (if (= n 0) #t (odd? (- n 1))))) (odd? (lambda (n) (if (= n 0) #f (even? (- n 1)))))) (even? 10))")).toBe("#t");
+    expect(
+      evalExpr(
+        "(letrec ((even? (lambda (n) (if (= n 0) #t (odd? (- n 1))))) (odd? (lambda (n) (if (= n 0) #f (even? (- n 1)))))) (even? 10))",
+      ),
+    ).toBe("#t");
   });
 
   it("evaluates named let", () => {
-    expect(evalExpr("(let loop ((n 5) (acc 1)) (if (= n 0) acc (loop (- n 1) (* acc n))))")).toBe("120");
+    expect(
+      evalExpr(
+        "(let loop ((n 5) (acc 1)) (if (= n 0) acc (loop (- n 1) (* acc n))))",
+      ),
+    ).toBe("120");
   });
 });
 
@@ -319,9 +333,9 @@ describe("Evaluator - Strings", () => {
   });
 
   it("string conversion", () => {
-    expect(evalExpr("(string->symbol \"hello\")")).toBe("hello");
+    expect(evalExpr('(string->symbol "hello")')).toBe("hello");
     expect(evalExpr("(symbol->string 'world)")).toBe("world");
-    expect(evalExpr("(string->list \"abc\")")).toBe("(a b c)");
+    expect(evalExpr('(string->list "abc")')).toBe("(a b c)");
     expect(evalExpr("(list->string '(#\\a #\\b #\\c))")).toBe("abc");
   });
 });
@@ -341,7 +355,9 @@ describe("Evaluator - Vectors", () => {
     expect(evalExpr("(vector 1 2 3)")).toBe("#(1 2 3)");
     expect(evalExpr("(vector-length (vector 1 2 3))")).toBe("3");
     expect(evalExpr("(vector-ref (vector 'a 'b 'c) 1)")).toBe("b");
-    expect(evalExpr("(let ((v (vector 1 2 3))) (vector-set! v 1 99) v)")).toBe("#(1 99 3)");
+    expect(evalExpr("(let ((v (vector 1 2 3))) (vector-set! v 1 99) v)")).toBe(
+      "#(1 99 3)",
+    );
     expect(evalExpr("(vector->list #(1 2 3))")).toBe("(1 2 3)");
     expect(evalExpr("(list->vector '(1 2 3))")).toBe("#(1 2 3)");
   });
@@ -353,7 +369,9 @@ describe("Evaluator - Vectors", () => {
 
 describe("Evaluator - Do loop", () => {
   it("evaluates do loop", () => {
-    expect(evalExpr("(do ((i 0 (+ i 1)) (sum 0 (+ sum i))) ((= i 5) sum))")).toBe("10");
+    expect(
+      evalExpr("(do ((i 0 (+ i 1)) (sum 0 (+ sum i))) ((= i 5) sum))"),
+    ).toBe("10");
   });
 
   it("do loop with body", () => {
@@ -389,7 +407,9 @@ describe("Evaluator - Tail calls", () => {
   });
 
   it("handles named let tail calls", () => {
-    const result = evalExpr("(let loop ((n 100000) (acc 0)) (if (= n 0) acc (loop (- n 1) (+ acc 1))))");
+    const result = evalExpr(
+      "(let loop ((n 100000) (acc 0)) (if (= n 0) acc (loop (- n 1) (+ acc 1))))",
+    );
     expect(result).toBe("100000");
   });
 });
@@ -409,7 +429,7 @@ describe("Evaluator - Values", () => {
 describe("Evaluator - Type predicates", () => {
   it("tests various type predicates", () => {
     expect(evalExpr("(number? 42)")).toBe("#t");
-    expect(evalExpr("(string? \"hi\")")).toBe("#t");
+    expect(evalExpr('(string? "hi")')).toBe("#t");
     expect(evalExpr("(symbol? 'foo)")).toBe("#t");
     expect(evalExpr("(char? #\\a)")).toBe("#t");
     expect(evalExpr("(vector? #(1 2))")).toBe("#t");
@@ -421,27 +441,32 @@ describe("Evaluator - Type predicates", () => {
 
 describe("Evaluator - define-syntax", () => {
   it("defines and uses macros", () => {
-    expect(evalExpr(`
+    expect(
+      evalExpr(`
       (define-syntax my-if
         (syntax-rules ()
           ((_ test then else)
            (cond (test then) (else else)))))
       (my-if #t 1 2)
-    `)).toBe("1");
+    `),
+    ).toBe("1");
   });
 
   it("supports ellipsis patterns", () => {
-    expect(evalExpr(`
+    expect(
+      evalExpr(`
       (define-syntax my-list
         (syntax-rules ()
           ((_ e ...)
            (list e ...))))
       (my-list 1 2 3)
-    `)).toBe("(1 2 3)");
+    `),
+    ).toBe("(1 2 3)");
   });
 
   it("defines swap!", () => {
-    expect(evalExpr(`
+    expect(
+      evalExpr(`
       (define-syntax swap!
         (syntax-rules ()
           ((_ a b)
@@ -452,7 +477,8 @@ describe("Evaluator - define-syntax", () => {
       (define y 2)
       (swap! x y)
       (list x y)
-    `)).toBe("(2 1)");
+    `),
+    ).toBe("(2 1)");
   });
 });
 

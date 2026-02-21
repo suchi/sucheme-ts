@@ -17,7 +17,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "vitest": "^3.0.5",
-    "typescript": "^5.7.3"
+    "@types/node": "^25.3.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
   }
 }

@@ -1,11 +1,17 @@
-import { SchemeVal, SchemeError, UNDEFINED, display, write } from "./types.js";
-import { Environment } from "./environment.js";
-import { parse } from "./parser.js";
-import { evaluate } from "./evaluator.js";
-import { makePrimitives } from "./primitives.js";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { Environment } from "./environment.js";
+import { evaluate } from "./evaluator.js";
+import { parse } from "./parser.js";
+import { makePrimitives } from "./primitives.js";
+import {
+  SchemeError,
+  type SchemeVal,
+  UNDEFINED,
+  display,
+  write,
+} from "./types.js";
 
 export class Interpreter {
   public globalEnv: Environment;
@@ -30,7 +36,8 @@ export class Interpreter {
       type: "primitive",
       name: "display",
       fn: (args) => {
-        if (args.length < 1) throw new SchemeError("display: expected at least 1 argument");
+        if (args.length < 1)
+          throw new SchemeError("display: expected at least 1 argument");
         cb(display(args[0]));
         return UNDEFINED;
       },
@@ -39,7 +46,8 @@ export class Interpreter {
       type: "primitive",
       name: "write",
       fn: (args) => {
-        if (args.length < 1) throw new SchemeError("write: expected at least 1 argument");
+        if (args.length < 1)
+          throw new SchemeError("write: expected at least 1 argument");
         cb(write(args[0]));
         return UNDEFINED;
       },
@@ -56,8 +64,10 @@ export class Interpreter {
       type: "primitive",
       name: "write-char",
       fn: (args) => {
-        if (args.length < 1) throw new SchemeError("write-char: expected at least 1 argument");
-        if (args[0].type !== "char") throw new SchemeError("write-char: not a char");
+        if (args.length < 1)
+          throw new SchemeError("write-char: expected at least 1 argument");
+        if (args[0].type !== "char")
+          throw new SchemeError("write-char: not a char");
         cb(args[0].value);
         return UNDEFINED;
       },

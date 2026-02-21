@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import * as readline from "node:readline";
-import { Interpreter, display, write, SchemeError } from "@cpscheme/core";
+import { Interpreter, SchemeError, display, write } from "@cpscheme/core";
 
 const interp = new Interpreter((s) => process.stdout.write(s));
 

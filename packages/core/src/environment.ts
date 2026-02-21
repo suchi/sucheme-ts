@@ -1,4 +1,4 @@
-import { SchemeError, SchemeVal } from "./types.js";
+import { SchemeError, type SchemeVal } from "./types.js";
 
 export class Environment {
   private bindings: Map<string, SchemeVal>;
@@ -11,7 +11,7 @@ export class Environment {
 
   lookup(name: string): SchemeVal {
     if (this.bindings.has(name)) {
-      return this.bindings.get(name)!;
+      return this.bindings.get(name) as SchemeVal;
     }
     if (this.parent) {
       return this.parent.lookup(name);

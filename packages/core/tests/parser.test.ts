@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { parse, parseOne } from "../src/parser.js";
 import { display, write } from "../src/types.js";
 

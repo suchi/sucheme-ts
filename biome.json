@@ -3,7 +3,13 @@
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist/**", "node_modules/**", "coverage/**", "*.scm", "packages/web/index.html"]
+    "ignore": [
+      "dist/**",
+      "node_modules/**",
+      "coverage/**",
+      "*.scm",
+      "packages/web/index.html"
+    ]
   },
   "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2 },
   "linter": {

@@ -1,16 +1,16 @@
-import {
-  SchemeVal,
-  SchemeError,
-  SyntaxRulesTransformer,
-  NIL,
-  cons,
-  makeSymbol,
-  arrayToList,
-  listToArray,
-  isList,
-  display,
-} from "./types.js";
 import type { Environment } from "./environment.js";
+import {
+  NIL,
+  SchemeError,
+  type SchemeVal,
+  type SyntaxRulesTransformer,
+  arrayToList,
+  cons,
+  display,
+  isList,
+  listToArray,
+  makeSymbol,
+} from "./types.js";
 
 // Match a syntax-rules pattern against a form, returning bindings or null
 function matchPattern(
@@ -68,7 +68,7 @@ function matchPattern(
       }
 
       // Match as many elements as possible
-      let current: SchemeVal = form;
+      const current: SchemeVal = form;
       const collected: SchemeVal[] = [];
 
       // Count how many elements remain after ellipsis
@@ -89,7 +89,8 @@ function matchPattern(
       // Match ellipsis elements
       for (let i = 0; i < ellipsisCount; i++) {
         const subBindings = new Map<string, SchemeVal | SchemeVal[]>();
-        if (!matchPattern(subPattern, formElements[i], literals, subBindings)) return false;
+        if (!matchPattern(subPattern, formElements[i], literals, subBindings))
+          return false;
         for (const v of subPatVars) {
           const existing = bindings.get(v) as SchemeVal[];
           const val = subBindings.get(v);
@@ -126,7 +127,10 @@ function matchPattern(
     if (form.type !== "vector") return false;
     if (pattern.elements.length !== form.elements.length) return false;
     for (let i = 0; i < pattern.elements.length; i++) {
-      if (!matchPattern(pattern.elements[i], form.elements[i], literals, bindings)) return false;
+      if (
+        !matchPattern(pattern.elements[i], form.elements[i], literals, bindings)
+      )
+        return false;
     }
     return true;
   }
@@ -140,9 +144,17 @@ function collectPatternVars(pattern: SchemeVal, literals: string[]): string[] {
   return vars;
 }
 
-function collectPatternVarsHelper(pattern: SchemeVal, literals: string[], vars: string[]): void {
+function collectPatternVarsHelper(
+  pattern: SchemeVal,
+  literals: string[],
+  vars: string[],
+): void {
   if (pattern.type === "symbol") {
-    if (pattern.name !== "_" && pattern.name !== "..." && !literals.includes(pattern.name)) {
+    if (
+      pattern.name !== "_" &&
+      pattern.name !== "..." &&
+      !literals.includes(pattern.name)
+    ) {
       vars.push(pattern.name);
     }
     return;
@@ -180,7 +192,9 @@ function expandTemplate(
     if (val !== undefined) {
       if (Array.isArray(val)) {
         if (ellipsisDepth > 0) {
-          throw new SchemeError(`macro: ellipsis variable used at wrong depth: ${template.name}`);
+          throw new SchemeError(
+            `macro: ellipsis variable used at wrong depth: ${template.name}`,
+          );
         }
         return val[0] ?? NIL;
       }
@@ -223,7 +237,9 @@ function expandTemplate(
           const arr = bindings.get(v) as SchemeVal[];
           subBindings.set(v, arr[i] ?? NIL);
         }
-        expanded.push(expandTemplate(subTemplate, subBindings, ellipsisDepth + 1));
+        expanded.push(
+          expandTemplate(subTemplate, subBindings, ellipsisDepth + 1),
+        );
       }
 
       // Build list from expanded + rest
@@ -252,7 +268,10 @@ function expandTemplate(
   return template;
 }
 
-function findEllipsisVars(template: SchemeVal, bindings: Map<string, SchemeVal | SchemeVal[]>): string[] {
+function findEllipsisVars(
+  template: SchemeVal,
+  bindings: Map<string, SchemeVal | SchemeVal[]>,
+): string[] {
   const vars: string[] = [];
   findEllipsisVarsHelper(template, bindings, vars);
   return vars;
@@ -282,13 +301,17 @@ function findEllipsisVarsHelper(
   }
 }
 
-export function applyMacro(transformer: SyntaxRulesTransformer, form: SchemeVal): SchemeVal {
+export function applyMacro(
+  transformer: SyntaxRulesTransformer,
+  form: SchemeVal,
+): SchemeVal {
   const { literals, rules } = transformer;
 
   for (const rule of rules) {
     const bindings = new Map<string, SchemeVal | SchemeVal[]>();
     // The pattern's car is the keyword - skip it in matching
-    const patternTail = rule.pattern.type === "pair" ? rule.pattern.cdr : rule.pattern;
+    const patternTail =
+      rule.pattern.type === "pair" ? rule.pattern.cdr : rule.pattern;
     const formTail = form.type === "pair" ? form.cdr : form;
 
     if (matchPattern(patternTail, formTail, literals, bindings)) {
@@ -299,7 +322,10 @@ export function applyMacro(transformer: SyntaxRulesTransformer, form: SchemeVal)
   throw new SchemeError(`macro: no matching pattern for ${display(form)}`);
 }
 
-export function parseSyntaxRules(form: SchemeVal, definitionEnv: Environment): SyntaxRulesTransformer {
+export function parseSyntaxRules(
+  form: SchemeVal,
+  definitionEnv: Environment,
+): SyntaxRulesTransformer {
   // (syntax-rules (literals...) (pattern template) ...)
   if (form.type !== "pair") throw new SchemeError("syntax-rules: invalid form");
 
@@ -311,7 +337,8 @@ export function parseSyntaxRules(form: SchemeVal, definitionEnv: Environment): S
 
   if (literalsList.type !== "null") {
     for (const lit of listToArray(literalsList)) {
-      if (lit.type !== "symbol") throw new SchemeError("syntax-rules: literal must be symbol");
+      if (lit.type !== "symbol")
+        throw new SchemeError("syntax-rules: literal must be symbol");
       literals.push(lit.name);
     }
   }
@@ -319,9 +346,13 @@ export function parseSyntaxRules(form: SchemeVal, definitionEnv: Environment): S
   const rules: Array<{ pattern: SchemeVal; template: SchemeVal }> = [];
   for (let i = 1; i < args.length; i++) {
     const rule = args[i];
-    if (rule.type !== "pair") throw new SchemeError("syntax-rules: invalid rule");
+    if (rule.type !== "pair")
+      throw new SchemeError("syntax-rules: invalid rule");
     const ruleArr = listToArray(rule);
-    if (ruleArr.length !== 2) throw new SchemeError("syntax-rules: rule must have pattern and template");
+    if (ruleArr.length !== 2)
+      throw new SchemeError(
+        "syntax-rules: rule must have pattern and template",
+      );
     rules.push({ pattern: ruleArr[0], template: ruleArr[1] });
   }
 

@@ -119,12 +119,14 @@ export function cons(car: SchemeVal, cdr: SchemeVal): SchemePair {
 }
 
 export function car(pair: SchemeVal): SchemeVal {
-  if (pair.type !== "pair") throw new SchemeError(`car: not a pair: ${display(pair)}`);
+  if (pair.type !== "pair")
+    throw new SchemeError(`car: not a pair: ${display(pair)}`);
   return pair.car;
 }
 
 export function cdr(pair: SchemeVal): SchemeVal {
-  if (pair.type !== "pair") throw new SchemeError(`cdr: not a pair: ${display(pair)}`);
+  if (pair.type !== "pair")
+    throw new SchemeError(`cdr: not a pair: ${display(pair)}`);
   return pair.cdr;
 }
 
@@ -152,7 +154,10 @@ export function listToArray(val: SchemeVal): SchemeVal[] {
   return result;
 }
 
-export function listToArrayAllowImproper(val: SchemeVal): { elements: SchemeVal[]; tail: SchemeVal } {
+export function listToArrayAllowImproper(val: SchemeVal): {
+  elements: SchemeVal[];
+  tail: SchemeVal;
+} {
   const elements: SchemeVal[] = [];
   let current: SchemeVal = val;
   while (current.type === "pair") {
@@ -210,7 +215,8 @@ function schemeWrite(val: SchemeVal, isWrite: boolean): string {
       return val.value ? "#t" : "#f";
     case "number":
       if (Number.isNaN(val.value)) return "+nan.0";
-      if (!isFinite(val.value)) return val.value > 0 ? "+inf.0" : "-inf.0";
+      if (!Number.isFinite(val.value))
+        return val.value > 0 ? "+inf.0" : "-inf.0";
       return val.value.toString();
     case "string":
       return isWrite
@@ -289,9 +295,7 @@ export class ContinuationError extends Error {
 }
 
 export class TailCallError extends Error {
-  constructor(
-    public readonly thunk: () => SchemeVal,
-  ) {
+  constructor(public readonly thunk: () => SchemeVal) {
     super("tail-call");
     this.name = "TailCallError";
   }

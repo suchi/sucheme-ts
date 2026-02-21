@@ -26,9 +26,9 @@ export interface Token {
 }
 
 export class Lexer {
-  private pos: number = 0;
-  private line: number = 1;
-  private col: number = 1;
+  private pos = 0;
+  private line = 1;
+  private col = 1;
   private tokens: Token[] = [];
 
   constructor(private source: string) {}
@@ -40,7 +40,12 @@ export class Lexer {
       const tok = this.readToken();
       if (tok) this.tokens.push(tok);
     }
-    this.tokens.push({ type: "EOF", value: "", line: this.line, col: this.col });
+    this.tokens.push({
+      type: "EOF",
+      value: "",
+      line: this.line,
+      col: this.col,
+    });
     return this.tokens;
   }
 
@@ -189,7 +194,14 @@ export class Lexer {
     if (next === "\\") {
       return this.readChar(line, col);
     }
-    if (next === "b" || next === "o" || next === "d" || next === "x" || next === "e" || next === "i") {
+    if (
+      next === "b" ||
+      next === "o" ||
+      next === "d" ||
+      next === "x" ||
+      next === "e" ||
+      next === "i"
+    ) {
       return this.readPrefixedNumber(line, col, next);
     }
 
@@ -206,7 +218,11 @@ export class Lexer {
       const first = this.advance();
       name = first;
       // Check if it's a named character
-      while (this.pos < this.source.length && this.isSymbolChar(this.peek()) && !this.isDelimiter(this.peek())) {
+      while (
+        this.pos < this.source.length &&
+        this.isSymbolChar(this.peek()) &&
+        !this.isDelimiter(this.peek())
+      ) {
         name += this.advance();
       }
     }
@@ -215,7 +231,14 @@ export class Lexer {
 
   private readPrefixedNumber(line: number, col: number, prefix: string): Token {
     this.advance(); // consume prefix letter
-    const rest = this.readWhile((c) => this.isNumberChar(c) || c === "+" || c === "-" || c === "." || c === "/");
+    const rest = this.readWhile(
+      (c) =>
+        this.isNumberChar(c) ||
+        c === "+" ||
+        c === "-" ||
+        c === "." ||
+        c === "/",
+    );
     return { type: "NUMBER", value: `#${prefix}${rest}`, line, col };
   }
 
@@ -247,7 +270,16 @@ export class Lexer {
     if (this.peek() === "+" || this.peek() === "-") {
       value += this.advance();
     }
-    value += this.readWhile((c) => this.isNumberChar(c) || c === "." || c === "/" || c === "e" || c === "E" || c === "+" || c === "-");
+    value += this.readWhile(
+      (c) =>
+        this.isNumberChar(c) ||
+        c === "." ||
+        c === "/" ||
+        c === "e" ||
+        c === "E" ||
+        c === "+" ||
+        c === "-",
+    );
     return { type: "NUMBER", value, line, col };
   }
 
@@ -289,11 +321,22 @@ export class Lexer {
   }
 
   private isNumberStart(ch: string): boolean {
-    return (ch >= "0" && ch <= "9") || ((ch === "+" || ch === "-") && this.peek(1) >= "0" && this.peek(1) <= "9") || (ch === "+" && (this.peek(1) === "i" || this.peek(1) === "n")) || (ch === "-" && (this.peek(1) === "i" || this.peek(1) === "n"));
+    return (
+      (ch >= "0" && ch <= "9") ||
+      ((ch === "+" || ch === "-") &&
+        this.peek(1) >= "0" &&
+        this.peek(1) <= "9") ||
+      (ch === "+" && (this.peek(1) === "i" || this.peek(1) === "n")) ||
+      (ch === "-" && (this.peek(1) === "i" || this.peek(1) === "n"))
+    );
   }
 
   private isNumberChar(ch: string): boolean {
-    return (ch >= "0" && ch <= "9") || (ch >= "a" && ch <= "f") || (ch >= "A" && ch <= "F");
+    return (
+      (ch >= "0" && ch <= "9") ||
+      (ch >= "a" && ch <= "f") ||
+      (ch >= "A" && ch <= "F")
+    );
   }
 
   private isSymbolChar(ch: string): boolean {
