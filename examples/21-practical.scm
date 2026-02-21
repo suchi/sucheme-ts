@@ -1,5 +1,5 @@
 ; サンプル 089〜104: 実用プログラム例
-; 実行方法: cpscheme examples/21-practical.scm
+; 実行方法: sucheme-ts examples/21-practical.scm
 
 ;;; ===== クイックソート =====
 (display "=== クイックソート ===") (newline)

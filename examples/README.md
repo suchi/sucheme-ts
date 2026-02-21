@@ -16,10 +16,10 @@ npm run build
 node packages/cli/dist/index.js examples/01-basic-types.scm
 ```
 
-または `cpscheme` が PATH にインストールされている場合：
+または `sucheme-ts` が PATH にインストールされている場合：
 
 ```bash
-cpscheme examples/01-basic-types.scm
+sucheme-ts examples/01-basic-types.scm
 ```
 
 ### 全サンプルを一括実行
@@ -59,7 +59,7 @@ node packages/cli/dist/index.js examples/run-all.scm
 
 ```
 使い方:
-  cpscheme [オプション] [ファイル ...]
+  sucheme-ts [オプション] [ファイル ...]
 
 オプション:
   -h, --help            ヘルプを表示して終了
@@ -72,11 +72,11 @@ node packages/cli/dist/index.js examples/run-all.scm
       --no-write        REPL で式の結果を表示しない
 
 使用例:
-  cpscheme                          # 対話 REPL を起動
-  cpscheme script.scm               # スクリプトを実行して終了
-  cpscheme -e "(+ 1 2)"             # 式を評価して終了
-  cpscheme -l lib.scm -i            # ライブラリを読み込んで REPL を起動
-  cpscheme -q script.scm            # バナーなしでスクリプトを実行
-  cpscheme -e "(display 42)" -i     # 評価後に REPL を起動
-  echo "(+ 1 2)" | cpscheme -b      # stdin から一括処理
+  sucheme-ts                          # 対話 REPL を起動
+  sucheme-ts script.scm               # スクリプトを実行して終了
+  sucheme-ts -e "(+ 1 2)"             # 式を評価して終了
+  sucheme-ts -l lib.scm -i            # ライブラリを読み込んで REPL を起動
+  sucheme-ts -q script.scm            # バナーなしでスクリプトを実行
+  sucheme-ts -e "(display 42)" -i     # 評価後に REPL を起動
+  echo "(+ 1 2)" | sucheme-ts -b      # stdin から一括処理
 ```

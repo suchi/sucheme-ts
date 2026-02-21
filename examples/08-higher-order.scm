@@ -1,5 +1,5 @@
 ; サンプル 037〜044: 高階手続き
-; 実行方法: cpscheme examples/08-higher-order.scm
+; 実行方法: sucheme-ts examples/08-higher-order.scm
 
 (display "=== map ===") (newline)
 (define (square x) (* x x))

@@ -1,5 +1,5 @@
 ; サンプル 064〜067: ベクター
-; 実行方法: cpscheme examples/14-vectors.scm
+; 実行方法: sucheme-ts examples/14-vectors.scm
 
 (display "=== ベクターの基本操作 ===") (newline)
 (define v (vector 1 2 3 4 5))

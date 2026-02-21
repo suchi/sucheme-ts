@@ -1,5 +1,5 @@
 ; サンプル 022〜026: 手続きの定義
-; 実行方法: cpscheme examples/05-procedures.scm
+; 実行方法: sucheme-ts examples/05-procedures.scm
 
 (display "=== define による手続き定義 ===") (newline)
 (define (square x)

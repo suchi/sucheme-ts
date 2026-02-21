@@ -34,14 +34,14 @@ jobs:
         run: |
           cd packages/cli
           npm pack
-          mv *.tgz ../../cpscheme-cli-$(node -p "require('./package.json').version").tgz
+          mv *.tgz ../../sucheme-ts-cli-$(node -p "require('./package.json').version").tgz
           cd ../..
 
       - name: Package core library
         run: |
           cd packages/core
           npm pack
-          mv *.tgz ../../cpscheme-core-$(node -p "require('./package.json').version").tgz
+          mv *.tgz ../../sucheme-ts-core-$(node -p "require('./package.json').version").tgz
           cd ../..
 
       - name: Build web archive
@@ -49,7 +49,7 @@ jobs:
           cd packages/web
           npm run build
           cd dist
-          zip -r ../../cpscheme-web-$(node -p "require('../package.json').version").zip .
+          zip -r ../../sucheme-ts-web-$(node -p "require('../package.json').version").zip .
           cd ../..
 
       - name: Create GitHub Release
@@ -57,6 +57,6 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            cpscheme-cli-*.tgz
-            cpscheme-core-*.tgz
-            cpscheme-web-*.zip
+            sucheme-ts-cli-*.tgz
+            sucheme-ts-core-*.tgz
+            sucheme-ts-web-*.zip

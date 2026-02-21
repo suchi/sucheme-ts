@@ -1,5 +1,5 @@
 ; サンプル 015〜016: 変数の定義
-; 実行方法: cpscheme examples/03-define.scm
+; 実行方法: sucheme-ts examples/03-define.scm
 
 (display "=== define による変数定義 ===") (newline)
 (define x 42)

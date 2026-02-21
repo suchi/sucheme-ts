@@ -1,5 +1,5 @@
 ; サンプル 078〜079: 多値
-; 実行方法: cpscheme examples/17-multiple-values.scm
+; 実行方法: sucheme-ts examples/17-multiple-values.scm
 
 (display "=== values で複数の値を返す ===") (newline)
 (define (div-and-mod a b)

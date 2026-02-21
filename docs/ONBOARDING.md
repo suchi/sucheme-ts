@@ -1,6 +1,6 @@
 # 開発者向けオンボーディングガイド
 
-**cpscheme** へようこそ — TypeScript 製 R5RS 準拠 Scheme インタプリタです。
+**sucheme-ts** へようこそ — TypeScript 製 R5RS 準拠 Scheme インタプリタです。
 
 ## 前提条件
 
@@ -15,8 +15,8 @@
 ### 1. クローンとインストール
 
 ```bash
-git clone https://github.com/suchi/cpschueme.git
-cd cpschueme
+git clone https://github.com/suchi/sucheme-ts.git
+cd sucheme-ts
 npm install
 ```
 
@@ -49,7 +49,7 @@ node packages/cli/dist/index.js
 ## プロジェクト構造
 
 ```
-cpschueme/
+sucheme-ts/
 ├── .editorconfig           # エディター設定
 ├── .gitignore
 ├── biome.json              # リンター・フォーマッター設定（ルート）
@@ -137,9 +137,9 @@ flowchart TD
 graph TD
     subgraph モノレポ
         root["ルート\n(package.json)"]
-        core["packages/core\n@cpscheme/core"]
-        cli["packages/cli\n@cpscheme/cli"]
-        web["packages/web\n@cpscheme/web"]
+        core["packages/core\n@sucheme-ts/core"]
+        cli["packages/cli\n@sucheme-ts/cli"]
+        web["packages/web\n@sucheme-ts/web"]
     end
     root -- "npm workspaces" --> core
     root -- "npm workspaces" --> cli
@@ -310,7 +310,7 @@ flowchart LR
 
 ## トラブルシューティング
 
-### `Cannot find module '@cpscheme/core'`
+### `Cannot find module '@sucheme-ts/core'`
 
 プロジェクトルートから `npm install` を実行してワークスペースパッケージをリンクしてください。
 

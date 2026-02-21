@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@cpscheme/core": resolve(__dirname, "../core/src/index.ts"),
+      "@sucheme-ts/core": resolve(__dirname, "../core/src/index.ts"),
     },
   },
 });

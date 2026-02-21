@@ -1,9 +1,9 @@
 ; サンプル 075〜077: 継続（call/cc）
-; 実行方法: cpscheme examples/16-callcc.scm
+; 実行方法: sucheme-ts examples/16-callcc.scm
 ;
 ; call/cc（call-with-current-continuation）は
 ; 現在の「続きの計算」を捕捉します。
-; cpscheme はエスケープ継続をサポートします。
+; sucheme-ts はエスケープ継続をサポートします。
 
 (display "=== call/cc の基本 ===") (newline)
 ; 継続を呼ぶと残りの計算を中断して値を返す

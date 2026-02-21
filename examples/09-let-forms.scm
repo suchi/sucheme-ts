@@ -1,5 +1,5 @@
 ; サンプル 045〜048: let フォーム
-; 実行方法: cpscheme examples/09-let-forms.scm
+; 実行方法: sucheme-ts examples/09-let-forms.scm
 
 (display "=== let ===") (newline)
 (display

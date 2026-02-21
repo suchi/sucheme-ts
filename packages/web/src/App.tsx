@@ -1,4 +1,4 @@
-import { Interpreter, SchemeError, write } from "@cpscheme/core";
+import { Interpreter, SchemeError, write } from "@sucheme-ts/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 
