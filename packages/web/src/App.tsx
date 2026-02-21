@@ -23,7 +23,7 @@ export default function App() {
       id: 0,
       input: "",
       output:
-        "CPScheme - R5RS Scheme Interpreter\nType Scheme expressions and press Enter or click Run.\n",
+        "sucheme-ts - R5RS Scheme Interpreter\nType Scheme expressions and press Enter or click Run.\n",
       isError: false,
     },
   ]);
@@ -108,7 +108,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🎯 CPScheme</h1>
+        <h1>🎯 sucheme-ts</h1>
         <p>R5RS Scheme Interpreter</p>
       </header>
 
