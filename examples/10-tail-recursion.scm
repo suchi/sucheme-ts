@@ -1,8 +1,8 @@
 ; サンプル 049〜052: 末尾再帰・名前付き let
-; 実行方法: cpscheme examples/10-tail-recursion.scm
+; 実行方法: sucheme-ts examples/10-tail-recursion.scm
 ;
 ; R5RS は末尾呼び出し最適化（TCO）を必須とします。
-; cpscheme はトランポリンパターンで TCO を実装しており、
+; sucheme-ts はトランポリンパターンで TCO を実装しており、
 ; 深い末尾再帰でもスタックオーバーフローが起きません。
 
 (display "=== 末尾再帰による階乗 ===") (newline)

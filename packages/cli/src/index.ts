@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * CPScheme CLI - R5RS Scheme Interpreter
+ * sucheme-ts CLI - R5RS Scheme Interpreter
  *
  * Usage:
- *   cpscheme [options] [file ...]
+ *   sucheme-ts [options] [file ...]
  *
  * Options:
  *   -h, --help            Show this help message and exit
@@ -18,7 +18,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as readline from "node:readline";
-import { Interpreter, SchemeError, write } from "@cpscheme/core";
+import { Interpreter, SchemeError, write } from "@sucheme-ts/core";
 
 // ---- version ---------------------------------------------------------------
 
@@ -67,7 +67,7 @@ function parseArgs(argv: string[]): CliOptions {
       case "--eval": {
         const expr = argv[++i];
         if (!expr) {
-          console.error(`cpscheme: option ${arg} requires an argument`);
+          console.error(`sucheme-ts: option ${arg} requires an argument`);
           process.exit(1);
         }
         opts.evalExprs.push(expr);
@@ -77,7 +77,7 @@ function parseArgs(argv: string[]): CliOptions {
       case "--load": {
         const file = argv[++i];
         if (!file) {
-          console.error(`cpscheme: option ${arg} requires an argument`);
+          console.error(`sucheme-ts: option ${arg} requires an argument`);
           process.exit(1);
         }
         opts.loadFiles.push(file);
@@ -100,7 +100,7 @@ function parseArgs(argv: string[]): CliOptions {
         break;
       default:
         if (arg.startsWith("-")) {
-          console.error(`cpscheme: unknown option: ${arg}`);
+          console.error(`sucheme-ts: unknown option: ${arg}`);
           process.exit(1);
         }
         opts.files.push(arg);
@@ -116,10 +116,10 @@ function parseArgs(argv: string[]): CliOptions {
 
 function printHelp(): void {
   console.log(`\
-cpscheme ${VERSION} - R5RS Scheme Interpreter
+sucheme-ts ${VERSION} - R5RS Scheme Interpreter
 
 Usage:
-  cpscheme [options] [file ...]
+  sucheme-ts [options] [file ...]
 
 Options:
   -h, --help            Show this help message and exit
@@ -132,17 +132,17 @@ Options:
       --no-write        Do not print expression results in REPL
 
 Examples:
-  cpscheme                        # Start interactive REPL
-  cpscheme script.scm             # Execute script and exit
-  cpscheme -e "(+ 1 2)"          # Evaluate expression and exit
-  cpscheme -l lib.scm -i          # Load library then start REPL
-  cpscheme -q script.scm          # Run script silently
-  cpscheme -e "(display 42)" -i   # Evaluate then start REPL
-  echo "(+ 1 2)" | cpscheme -b    # Batch mode from stdin`);
+  sucheme-ts                        # Start interactive REPL
+  sucheme-ts script.scm             # Execute script and exit
+  sucheme-ts -e "(+ 1 2)"          # Evaluate expression and exit
+  sucheme-ts -l lib.scm -i          # Load library then start REPL
+  sucheme-ts -q script.scm          # Run script silently
+  sucheme-ts -e "(display 42)" -i   # Evaluate then start REPL
+  echo "(+ 1 2)" | sucheme-ts -b    # Batch mode from stdin`);
 }
 
 function printVersion(): void {
-  console.log(`cpscheme ${VERSION}`);
+  console.log(`sucheme-ts ${VERSION}`);
 }
 
 // ---- interpreter helpers ---------------------------------------------------
@@ -177,7 +177,7 @@ function loadFile(filePath: string): boolean {
     return evalSource(source, resolved);
   } catch (e) {
     if ((e as NodeJS.ErrnoException).code === "ENOENT") {
-      console.error(`cpscheme: cannot open file '${filePath}': No such file`);
+      console.error(`sucheme-ts: cannot open file '${filePath}': No such file`);
     } else if (e instanceof SchemeError) {
       console.error(`${filePath}: ${e.message}`);
     } else if (e instanceof Error) {
@@ -192,7 +192,7 @@ function loadFile(filePath: string): boolean {
 // ---- REPL ------------------------------------------------------------------
 
 function printBanner(): void {
-  console.log(`CPScheme ${VERSION} - R5RS Scheme Interpreter`);
+  console.log(`sucheme-ts ${VERSION} - R5RS Scheme Interpreter`);
   console.log('Type "(exit)" or press Ctrl+D to quit\n');
 }
 

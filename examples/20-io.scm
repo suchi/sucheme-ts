@@ -1,5 +1,5 @@
 ; サンプル 086〜088: 入出力とポート
-; 実行方法: cpscheme examples/20-io.scm
+; 実行方法: sucheme-ts examples/20-io.scm
 
 (display "=== display と write の違い ===") (newline)
 ; display: 人間向け表示

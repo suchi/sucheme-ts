@@ -1,5 +1,5 @@
 ; サンプル 001〜007: 基本データ型
-; 実行方法: cpscheme examples/01-basic-types.scm
+; 実行方法: sucheme-ts examples/01-basic-types.scm
 ;
 ; このファイルでは Scheme の基本的なデータ型を学びます。
 

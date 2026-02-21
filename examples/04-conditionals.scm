@@ -1,5 +1,5 @@
 ; サンプル 017〜021: 条件分岐
-; 実行方法: cpscheme examples/04-conditionals.scm
+; 実行方法: sucheme-ts examples/04-conditionals.scm
 
 (display "=== if ===") (newline)
 (display (if (> 3 2) "yes" "no"))   (newline)   ; yes

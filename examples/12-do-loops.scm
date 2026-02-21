@@ -1,5 +1,5 @@
 ; サンプル 056〜058: do ループ
-; 実行方法: cpscheme examples/12-do-loops.scm
+; 実行方法: sucheme-ts examples/12-do-loops.scm
 
 (display "=== do による繰り返し ===") (newline)
 ; (do ((変数 初期値 更新式) ...)

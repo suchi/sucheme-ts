@@ -1,5 +1,5 @@
 ; サンプル 008〜014: 算術演算
-; 実行方法: cpscheme examples/02-arithmetic.scm
+; 実行方法: sucheme-ts examples/02-arithmetic.scm
 ;
 ; Scheme の算術演算手続きを紹介します。
 

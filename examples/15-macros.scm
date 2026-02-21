@@ -1,5 +1,5 @@
 ; サンプル 068〜074: マクロ（syntax-rules）
-; 実行方法: cpscheme examples/15-macros.scm
+; 実行方法: sucheme-ts examples/15-macros.scm
 ;
 ; マクロはコンパイル時に式を変換します。
 ; syntax-rules でパターンマッチングとテンプレート展開を定義します。

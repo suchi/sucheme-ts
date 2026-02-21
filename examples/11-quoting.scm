@@ -1,5 +1,5 @@
 ; サンプル 053〜054: クォートと quasiquote
-; 実行方法: cpscheme examples/11-quoting.scm
+; 実行方法: sucheme-ts examples/11-quoting.scm
 
 (display "=== quote ===") (newline)
 (display '(+ 1 2))     (newline)   ; (+ 1 2) — リスト（評価しない）

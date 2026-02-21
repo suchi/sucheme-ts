@@ -1,5 +1,5 @@
 ; サンプル 027〜031: 再帰
-; 実行方法: cpscheme examples/06-recursion.scm
+; 実行方法: sucheme-ts examples/06-recursion.scm
 
 (display "=== 階乗（基本的な再帰）===") (newline)
 (define (factorial n)

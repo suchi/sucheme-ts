@@ -1,5 +1,5 @@
 ; サンプル 083〜085: レコード型
-; 実行方法: cpscheme examples/19-records.scm
+; 実行方法: sucheme-ts examples/19-records.scm
 
 (display "=== define-record-type の基本 ===") (newline)
 (define-record-type point

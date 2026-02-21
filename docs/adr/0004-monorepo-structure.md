@@ -14,9 +14,9 @@
 
 ```
 packages/
-  core/   — @cpscheme/core（ライブラリ）
-  cli/    — @cpscheme/cli （Node.js CLI）
-  web/    — @cpscheme/web （Vite + React Web アプリ）
+  core/   — @sucheme-ts/core（ライブラリ）
+  cli/    — @sucheme-ts/cli （Node.js CLI）
+  web/    — @sucheme-ts/web （Vite + React Web アプリ）
 ```
 
 ## パッケージ構成図
@@ -29,17 +29,17 @@ graph TB
         tsbase["tsconfig.base.json"]
     end
 
-    subgraph "packages/core（@cpscheme/core）"
+    subgraph "packages/core（@sucheme-ts/core）"
         core_src["src/\n• types.ts\n• lexer.ts\n• parser.ts\n• evaluator.ts\n• macros.ts\n• primitives.ts\n• interpreter.ts"]
         core_test["tests/\n• lexer.test.ts\n• parser.test.ts\n• evaluator.test.ts\n• r5rs.test.ts"]
         core_stdlib["stdlib/init.scm"]
     end
 
-    subgraph "packages/cli（@cpscheme/cli）"
+    subgraph "packages/cli（@sucheme-ts/cli）"
         cli_src["src/index.ts\n（Node.js readline REPL）"]
     end
 
-    subgraph "packages/web（@cpscheme/web）"
+    subgraph "packages/web（@sucheme-ts/web）"
         web_src["src/App.tsx\n（React REPL UI）"]
         vite_cfg["vite.config.ts"]
     end
@@ -78,7 +78,7 @@ flowchart LR
 
 ## 根拠
 
-- **コード共有**: `@cpscheme/core` は CLI と Web 両方の単一依存として機能し、コード重複を避けられる
+- **コード共有**: `@sucheme-ts/core` は CLI と Web 両方の単一依存として機能し、コード重複を避けられる
 - **独立バージョニング**: 各パッケージは独自のバージョンとリリースサイクルを持てる
 - **統合ツール**: ルートの `npm install` 一回で全依存関係をインストール
 - **シンプル**: npm workspaces は npm 7+ に標準搭載されており、Lerna・Nx・Turborepo などの追加ツールが不要
@@ -95,6 +95,6 @@ flowchart LR
 ## 影響
 
 - ルート `package.json` で `"workspaces": ["packages/*"]` を使用
-- クロスパッケージのインポートはワークスペースエイリアス（`@cpscheme/core: "*"`）を使用
+- クロスパッケージのインポートはワークスペースエイリアス（`@sucheme-ts/core: "*"`）を使用
 - Biome 設定と TypeScript 基本設定はルートに置く
 - `vitest` は現在 `packages/core` のみ（ユニットテストを持つ唯一のパッケージ）

@@ -1,5 +1,5 @@
 ; サンプル 059〜063: 文字・文字列
-; 実行方法: cpscheme examples/13-strings-chars.scm
+; 実行方法: sucheme-ts examples/13-strings-chars.scm
 
 (display "=== 文字の操作 ===") (newline)
 (display (char-alphabetic? #\a))    (newline)   ; #t

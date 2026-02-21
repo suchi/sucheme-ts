@@ -1,5 +1,5 @@
 ; サンプル 032〜036: ペアとリスト
-; 実行方法: cpscheme examples/07-lists.scm
+; 実行方法: sucheme-ts examples/07-lists.scm
 
 (display "=== cons / car / cdr ===") (newline)
 (display (cons 1 2))           (newline)   ; (1 . 2)  ドットペア

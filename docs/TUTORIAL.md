@@ -1,6 +1,6 @@
-# cpscheme チュートリアル
+# sucheme-ts チュートリアル
 
-このドキュメントは、cpscheme（TypeScript 製 R5RS 準拠 Scheme インタプリタ）を使って Scheme プログラミングを学ぶためのガイドです。基本から応用まで、100 以上のサンプルプログラムを通して学べます。
+このドキュメントは、sucheme-ts（TypeScript 製 R5RS 準拠 Scheme インタプリタ）を使って Scheme プログラミングを学ぶためのガイドです。基本から応用まで、100 以上のサンプルプログラムを通して学べます。
 
 ## 目次
 
@@ -31,7 +31,7 @@
 
 ## 1. 実行環境の準備
 
-cpscheme は2つの方法で実行できます。
+sucheme-ts は2つの方法で実行できます。
 
 ### Web UI で実行
 
@@ -1813,7 +1813,7 @@ flowchart TD
 
 1. **R5RS 仕様書を読む** — [R5RS 公式](https://schemers.org/Documents/Standards/R5RS/)
 2. **SICP で学ぶ** — Structure and Interpretation of Computer Programs（計算機プログラムの構造と解釈）
-3. **cpscheme に貢献する** — バグ報告・新機能の実装
+3. **sucheme-ts に貢献する** — バグ報告・新機能の実装
 4. **拡張を実装する** — 完全継続、数値塔、ファイル I/O など
 
 詳細は [R5RS 対応状況](./R5RS-STATUS.md) と [オンボーディングガイド](./ONBOARDING.md) を参照してください。

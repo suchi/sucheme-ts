@@ -1,16 +1,16 @@
 {
-  "name": "@cpscheme/cli",
+  "name": "@sucheme-ts/cli",
   "version": "0.1.0",
   "type": "module",
   "bin": {
-    "cpscheme": "./dist/index.js"
+    "sucheme-ts": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@cpscheme/core": "*"
+    "@sucheme-ts/core": "*"
   },
   "devDependencies": {
     "typescript": "^5.7.3"

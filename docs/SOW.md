@@ -2,7 +2,7 @@
 
 ## プロジェクト名
 
-**cpscheme** — TypeScript 製 R5RS 準拠 Scheme インタプリタ
+**sucheme-ts** — TypeScript 製 R5RS 準拠 Scheme インタプリタ
 
 ## 概要
 

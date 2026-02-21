@@ -1,6 +1,6 @@
-# cpscheme
+# sucheme-ts
 
-[![CI](https://github.com/suchi/cpschueme/actions/workflows/ci.yml/badge.svg)](https://github.com/suchi/cpschueme/actions/workflows/ci.yml)
+[![CI](https://github.com/suchi/sucheme-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/suchi/sucheme-ts/actions/workflows/ci.yml)
 
 GitHub Copilot が TypeScript で構築した R5RS 準拠の Scheme インタプリタです。
 
@@ -9,9 +9,9 @@ GitHub Copilot が TypeScript で構築した R5RS 準拠の Scheme インタプ
 ```mermaid
 graph LR
     subgraph packages
-        core["@cpscheme/core\n(インタプリタ本体)"]
-        cli["@cpscheme/cli\n(CLI REPL)"]
-        web["@cpscheme/web\n(Web UI)"]
+        core["@sucheme-ts/core\n(インタプリタ本体)"]
+        cli["@sucheme-ts/cli\n(CLI REPL)"]
+        web["@sucheme-ts/web\n(Web UI)"]
     end
     cli --> core
     web --> core

@@ -1,5 +1,5 @@
 ; サンプル 080〜082: 例外処理
-; 実行方法: cpscheme examples/18-exceptions.scm
+; 実行方法: sucheme-ts examples/18-exceptions.scm
 
 (display "=== error で例外を投げる ===") (newline)
 (define (safe-divide a b)

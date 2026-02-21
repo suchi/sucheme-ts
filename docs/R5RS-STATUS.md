@@ -1,6 +1,6 @@
 # R5RS 対応状況
 
-cpscheme の R5RS（Revised⁵ Report on the Algorithmic Language Scheme）準拠状況の一覧です。
+sucheme-ts の R5RS（Revised⁵ Report on the Algorithmic Language Scheme）準拠状況の一覧です。
 
 凡例: ✅ 実装済み・完全動作 / ⚠️ 部分実装 / ❌ 未実装
 
@@ -312,4 +312,4 @@ pie title R5RS 対応状況
     "未実装（❌）" : 3
 ```
 
-cpscheme は R5RS の主要な機能をほぼ完全に実装しており、実用的な Scheme プログラムを動かすのに十分な対応状況です。
+sucheme-ts は R5RS の主要な機能をほぼ完全に実装しており、実用的な Scheme プログラムを動かすのに十分な対応状況です。

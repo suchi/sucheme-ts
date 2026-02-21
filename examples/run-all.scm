@@ -1,5 +1,5 @@
 ; 全サンプルを一括で実行するスクリプト
-; 実行方法: cpscheme examples/run-all.scm
+; 実行方法: sucheme-ts examples/run-all.scm
 ;
 ; このファイルは examples/ ディレクトリのすべての
 ; サンプルをセパレーターで区切って実行します。
