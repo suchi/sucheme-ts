@@ -883,7 +883,7 @@ p  ; => (99 20 30)
 (string-contains "hello" "xyz")          ; => #f
 
 ; string-split: 区切り文字で分割
-(string-split "a,b,c" #\,)  ; => ("a" "b" "c")
+(string-split "a,b,c" ",")  ; => ("a" "b" "c")
 
 ; string-join: リストを結合
 (string-join '("a" "b" "c") ",")  ; => "a,b,c"
@@ -1203,7 +1203,7 @@ sum  ; => 45
 ```scheme
 (define (try-divide a b)
   (guard (exn
-          ((string=? (error-message exn) "Division by zero")
+          ((string-contains (error-message exn) "Division by zero")
            "Cannot divide by zero!")
           (else
            (string-append "Other error: " (error-message exn))))

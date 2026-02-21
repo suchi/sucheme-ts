@@ -33,9 +33,15 @@ graph LR
 
 ```bash
 npm install
-npm test --workspace packages/core  # テスト実行
+npm run build
+npm test --workspace packages/core  # テスト実行（147件）
 npm run dev:web                      # Web UI 起動 → http://localhost:5173
-npm run build && node packages/cli/dist/index.js  # CLI REPL 起動
+
+# CLI の例
+node packages/cli/dist/index.js                          # 対話 REPL
+node packages/cli/dist/index.js examples/21-practical.scm  # サンプル実行
+node packages/cli/dist/index.js -e "(+ 1 2)"             # 式を評価
+node packages/cli/dist/index.js --help                   # ヘルプ表示
 ```
 
 ## ドキュメント
@@ -44,6 +50,7 @@ npm run build && node packages/cli/dist/index.js  # CLI REPL 起動
 - [開発者向けオンボーディングガイド](docs/ONBOARDING.md)
 - [チュートリアル（104 サンプル）](docs/TUTORIAL.md)
 - [R5RS 対応状況](docs/R5RS-STATUS.md)
+- [サンプルプログラム集](examples/README.md)
 - [アーキテクチャ決定記録（ADR）](docs/adr/)
 
 ## 技術スタック
