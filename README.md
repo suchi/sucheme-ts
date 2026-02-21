@@ -42,6 +42,8 @@ npm run build && node packages/cli/dist/index.js  # CLI REPL 起動
 
 - [作業範囲定義書（SOW）](docs/SOW.md)
 - [開発者向けオンボーディングガイド](docs/ONBOARDING.md)
+- [チュートリアル（104 サンプル）](docs/TUTORIAL.md)
+- [R5RS 対応状況](docs/R5RS-STATUS.md)
 - [アーキテクチャ決定記録（ADR）](docs/adr/)
 
 ## 技術スタック
