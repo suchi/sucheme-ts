@@ -1,51 +1,68 @@
-# ADR 0002: Use Vite, Vitest, and Biome
+# ADR 0002: Vite・Vitest・Biome を採用
 
-- **Status**: Accepted
-- **Date**: 2026-02-21
-- **Deciders**: Project team
+- **状態**: 採用
+- **日付**: 2026-02-21
+- **決定者**: プロジェクトチーム
 
-## Context
+## 背景
 
-We need a build system, test runner, and code quality tool that work well together for a TypeScript monorepo.
+TypeScript モノレポに対して、ビルドシステム・テストランナー・コード品質ツールが互いにうまく連携できる構成を選択する必要があります。
 
-## Decision
+## 決定
 
-Use **Vite** for bundling the web UI, **Vitest** for unit testing, and **Biome** for linting and formatting.
+Web UI のバンドルに **Vite**、ユニットテストに **Vitest**、リント・フォーマットに **Biome** を使用する。
 
-## Rationale
+## ツールの役割
+
+```mermaid
+graph LR
+    subgraph 開発時
+        VSCode["VS Code\n（エディター）"] -- "保存" --> Biome["Biome\nリント・フォーマット"]
+        Biome -- "自動修正" --> VSCode
+    end
+    subgraph テスト
+        Vitest["Vitest\nユニットテスト"] -- "Vite トランスフォーム利用" --> ViteCore["Vite コア"]
+    end
+    subgraph ビルド・実行
+        ViteCore -- "web バンドル" --> WebDist["packages/web/dist/"]
+        TSC["tsc\n（TypeScript コンパイラ）"] -- "CLI・コアビルド" --> NodeDist["packages/*/dist/"]
+    end
+```
+
+## 根拠
 
 ### Vite
 
-- Near-instant dev server with HMR (Hot Module Replacement)
-- Produces optimized production builds via Rollup
-- First-class TypeScript support without additional plugins
-- Perfect for the React-based Web UI
+- HMR（ホットモジュールリプレースメント）による瞬時の開発サーバー
+- Rollup 経由で最適化されたプロダクションビルドを生成
+- 追加プラグイン不要の TypeScript ファーストサポート
+- React ベースの Web UI に最適
 
 ### Vitest
 
-- Uses Vite's transform pipeline — zero additional configuration for TypeScript
-- Jest-compatible API reduces learning curve
-- Supports ESM natively, matching our module strategy
-- Fast parallel test execution
+- Vite のトランスフォームパイプラインを利用 — TypeScript のための追加設定不要
+- Jest 互換 API で学習コストが低い
+- ESM をネイティブサポート（当プロジェクトのモジュール戦略と一致）
+- 並列テスト実行による高速化
 
 ### Biome
 
-- Single tool for both linting and formatting (replaces ESLint + Prettier)
-- Written in Rust — significantly faster than JavaScript-based alternatives
-- Opinionated defaults reduce bikeshedding
-- Strong TypeScript support
+- リントとフォーマットを1ツールで実現（ESLint + Prettier を置き換え）
+- Rust 製 — JavaScript ベースの代替ツールより大幅に高速
+- 意見のある（opinionated）デフォルト設定で不毛な議論を削減
+- 強力な TypeScript サポート
 
-## Alternatives Considered
+## 検討した代替案
 
-| Tool | Reason not chosen |
+| ツール | 不採用理由 |
 |---|---|
-| Jest | Requires Babel or ts-jest, slower, ESM support is fragile |
-| ESLint + Prettier | Two tools, complex configuration, slower |
-| Webpack | More complex configuration, slower dev experience |
-| esbuild | Less feature-complete for monorepos |
+| Jest | Babel または ts-jest が必要、低速、ESM サポートが不安定 |
+| ESLint + Prettier | 2ツール必要、設定が複雑、低速 |
+| Webpack | 設定が複雑、開発体験が劣る |
+| esbuild | モノレポへの機能が不十分 |
 
-## Consequences
+## 影響
 
-- Vitest is used only in `packages/core` (CLI and web tests are integration-level)
-- Biome configuration lives in root `biome.json` and applies to all packages
-- `.scm` files excluded from Biome (it only processes JS/TS)
+- Vitest は `packages/core` のみで使用（CLI と Web のテストは現在統合レベル）
+- Biome 設定はルートの `biome.json` に置き、全パッケージに適用
+- `.scm` ファイルは Biome から除外（JS/TS のみ処理するため）

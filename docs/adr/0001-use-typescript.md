@@ -1,26 +1,41 @@
-# ADR 0001: Use TypeScript as the Implementation Language
+# ADR 0001: 実装言語に TypeScript を採用
 
-- **Status**: Accepted
-- **Date**: 2026-02-21
-- **Deciders**: Project team
+- **状態**: 採用
+- **日付**: 2026-02-21
+- **決定者**: プロジェクトチーム
 
-## Context
+## 背景
 
-We need to choose a language for implementing the Scheme interpreter. The interpreter will be used in both a Node.js CLI environment and a browser-based Web UI.
+Scheme インタプリタを実装するための言語を選択する必要があります。このインタプリタは Node.js CLI 環境とブラウザーベースの Web UI の両方で使用されます。
 
-## Decision
+## 決定
 
-Use **TypeScript** (strict mode) as the sole implementation language.
+**TypeScript**（strict モード）を唯一の実装言語として使用する。
 
-## Rationale
+## 採用言語の適用範囲
 
-- **Type safety**: A Scheme interpreter manipulates a wide variety of tagged-union value types (`SchemeVal`). TypeScript's discriminated union types (`type: "pair" | "null" | ...`) provide compile-time exhaustiveness checking.
-- **Browser + Node.js portability**: TypeScript compiles to standard JavaScript that runs in both environments without modification.
-- **Ecosystem**: Rich tooling (Vite, Vitest, Biome) is TypeScript-native.
-- **Maintainability**: Strict types prevent entire classes of runtime errors.
+```mermaid
+graph LR
+    TS["TypeScript\n（ソースコード）"]
+    subgraph コンパイル先
+        Node["JavaScript\n（Node.js）"]
+        Browser["JavaScript\n（ブラウザー）"]
+    end
+    TS -- "tsc でコンパイル" --> Node
+    TS -- "Vite でバンドル" --> Browser
+    Node --> CLI["CLI REPL"]
+    Browser --> WebUI["Web UI"]
+```
 
-## Consequences
+## 根拠
 
-- Build step required (TypeScript → JavaScript)
-- Cannot use TypeScript-specific runtime features in the interpreter core (portability requirement)
-- ESM modules used throughout (`.js` extension in import paths per TypeScript ESM conventions)
+- **型安全性**: Scheme インタプリタは多様なタグ付き共用体の値型（`SchemeVal`）を操作します。TypeScript の判別共用体（`type: "pair" | "null" | ...`）によってコンパイル時の網羅性チェックが可能です。
+- **ブラウザー + Node.js の移植性**: TypeScript は標準 JavaScript にコンパイルされ、変更なしで両環境で動作します。
+- **エコシステム**: Vite・Vitest・Biome などのリッチなツール群が TypeScript ネイティブです。
+- **保守性**: Strict 型付けにより、実行時エラーのクラス全体を防止できます。
+
+## 影響
+
+- ビルドステップが必要（TypeScript → JavaScript）
+- インタプリタコアでは TypeScript 固有のランタイム機能は使用不可（移植性の要件）
+- TypeScript ESM の慣例に従い、インポートパスには `.js` 拡張子を使用
