@@ -7,9 +7,7 @@ import {
   arrayToList,
   cons,
   display,
-  isList,
   listToArray,
-  makeSymbol,
 } from "./types.js";
 
 // Match a syntax-rules pattern against a form, returning bindings or null
@@ -68,8 +66,6 @@ function matchPattern(
       }
 
       // Match as many elements as possible
-      const current: SchemeVal = form;
-      const collected: SchemeVal[] = [];
 
       // Count how many elements remain after ellipsis
       const restPatternLength = listLength(restPattern);

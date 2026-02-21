@@ -236,6 +236,7 @@ function parseStringLiteral(raw: string): SchemeVal {
   while (i < inner.length) {
     if (inner[i] === "\\") {
       i++;
+      if (i >= inner.length) break;
       switch (inner[i]) {
         case "n":
           result += "\n";

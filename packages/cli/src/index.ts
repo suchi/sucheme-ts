@@ -22,7 +22,7 @@ import { Interpreter, SchemeError, write } from "@cpscheme/core";
 
 // ---- version ---------------------------------------------------------------
 
-const VERSION = "0.3.0";
+const VERSION = "0.1.0";
 
 // ---- option parsing --------------------------------------------------------
 

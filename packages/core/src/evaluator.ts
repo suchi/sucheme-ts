@@ -732,7 +732,7 @@ function evalDo(tail: SchemeVal, env: Environment): SchemeVal {
       v.step ? evaluate(v.step, doEnv) : doEnv.lookup(v.name),
     );
     for (let i = 0; i < vars.length; i++) {
-      doEnv.define(vars[i].name, newVals[i]);
+      doEnv.set(vars[i].name, newVals[i]);
     }
   }
 }

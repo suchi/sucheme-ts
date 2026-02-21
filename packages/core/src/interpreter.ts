@@ -1,6 +1,3 @@
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { Environment } from "./environment.js";
 import { evaluate } from "./evaluator.js";
 import { parse } from "./parser.js";
@@ -399,11 +396,6 @@ function getStdlibSource(): string {
        (if test
          (begin (if #f #f) expr ...)
          (begin body ... (loop (if (null? '(step ...)) var (car '(step ...))) ...)))))))
-
-(define-syntax define-syntax
-  (syntax-rules ()
-    ((_ name transformer)
-     (define-syntax name transformer))))
 
 (define-syntax let-values
   (syntax-rules ()

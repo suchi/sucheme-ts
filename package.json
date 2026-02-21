@@ -8,7 +8,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "dev:web": "npm run dev --workspace packages/web",
-    "dev:cli": "npm run dev --workspace packages/cli"
+    "dev:cli": "npm run start --workspace packages/cli"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

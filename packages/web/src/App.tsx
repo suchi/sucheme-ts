@@ -1,7 +1,9 @@
 import { Interpreter, SchemeError, write } from "@cpscheme/core";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 
 interface HistoryEntry {
+  id: number;
   input: string;
   output: string;
   isError: boolean;
@@ -18,6 +20,7 @@ const EXAMPLES = [
 export default function App() {
   const [history, setHistory] = useState<HistoryEntry[]>([
     {
+      id: 0,
       input: "",
       output:
         "CPScheme - R5RS Scheme Interpreter\nType Scheme expressions and press Enter or click Run.\n",
@@ -30,6 +33,7 @@ export default function App() {
   const outputRef = useRef<HTMLDivElement>(null);
   const interpRef = useRef<Interpreter | null>(null);
   const outputPartsRef = useRef<string[]>([]);
+  const nextIdRef = useRef(1); // initial history entry has id:0
 
   // Initialize a single persistent interpreter instance for REPL session state
   useEffect(() => {
@@ -71,7 +75,10 @@ export default function App() {
       }
     }
 
-    setHistory((h) => [...h, { input: code, output: result, isError }]);
+    setHistory((h) => [
+      ...h,
+      { id: nextIdRef.current++, input: code, output: result, isError },
+    ]);
     setCommandHistory((h) => [code, ...h]);
     setHistoryIndex(-1);
     setInput("");
@@ -81,7 +88,7 @@ export default function App() {
     }, 0);
   }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       runCode(input);
@@ -108,10 +115,7 @@ export default function App() {
       <main className="main">
         <div className="output-container" ref={outputRef}>
           {history.map((entry) => (
-            <div
-              key={`${entry.input}-${entry.output}`}
-              className="history-entry"
-            >
+            <div key={entry.id} className="history-entry">
               {entry.input && (
                 <div className="input-line">
                   <span className="prompt">scheme&gt; </span>
