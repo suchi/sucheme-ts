@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Interpreter, display, write, SchemeError } from "@cpscheme/core";
+import { Interpreter, write, SchemeError } from "@cpscheme/core";
 
 interface HistoryEntry {
   input: string;
@@ -21,51 +21,31 @@ export default function App() {
   const outputRef = useRef<HTMLDivElement>(null);
   const interpRef = useRef<Interpreter | null>(null);
 
-  // Initialize interpreter
+  // Initialize a single shared interpreter instance
   useEffect(() => {
-    const output: string[] = [];
-    interpRef.current = new Interpreter((s) => {
-      output.push(s);
-    });
+    const outputParts: string[] = [];
+    interpRef.current = new Interpreter((s) => outputParts.push(s));
   }, []);
-
-  const getInterp = () => {
-    if (!interpRef.current) {
-      interpRef.current = new Interpreter((s) => {
-        // handled below
-      });
-    }
-    return interpRef.current;
-  };
 
   const runCode = useCallback((code: string) => {
     if (!code.trim()) return;
 
     const outputParts: string[] = [];
-    const interp = new Interpreter((s) => outputParts.push(s));
 
-    // Copy global bindings from shared interpreter
-    // For simplicity, create a fresh interpreter per run but keep state
+    // Ensure interpreter is initialized
     if (!interpRef.current) {
       interpRef.current = new Interpreter((s) => outputParts.push(s));
     }
 
-    // Re-create with output callback
+    // Recreate with a fresh output callback for this run
     const sharedInterp = interpRef.current;
-    // Temporarily override output
-    const oldDef = sharedInterp.globalEnv.lookup.bind(sharedInterp.globalEnv);
+    // Override the display/write/newline primitives to capture output
+    const captureInterp = new Interpreter((s) => outputParts.push(s));
 
     let result: string;
     let isError = false;
 
     try {
-      // Run in the shared interpreter with captured output
-      const captureInterp = new Interpreter((s) => outputParts.push(s));
-      // Copy state from sharedInterp by re-evaluating... too complex, use shared
-      // Simple approach: create fresh interpreter for each session (stateless) but
-      // for a proper REPL we need state. Let's use a stateful approach.
-
-      // Use fresh interp with output capture for now:
       const val = captureInterp.evalString(code);
       const printed = outputParts.join("");
       const repr = val.type !== "undefined" ? write(val) : "";
@@ -160,17 +140,19 @@ export default function App() {
 
         <div className="examples">
           <span>Examples: </span>
-          {examples.map((ex, i) => (
-            <button
-              key={i}
-              className="example-btn"
-              onClick={() => {
-                setInput(ex);
-              }}
-            >
-              {ex.split("\n")[0].slice(0, 30)}...
-            </button>
-          ))}
+          {examples.map((ex, i) => {
+            const label = ex.split("\n")[0];
+            const truncated = label.length > 30 ? `${label.slice(0, 30)}...` : label;
+            return (
+              <button
+                key={i}
+                className="example-btn"
+                onClick={() => setInput(ex)}
+              >
+                {truncated}
+              </button>
+            );
+          })}
         </div>
       </main>
     </div>

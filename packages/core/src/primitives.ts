@@ -1326,13 +1326,7 @@ export function makePrimitives(): Map<string, SchemeVal> {
     return makeString(display(args[0]));
   });
 
-  // Type conversion
-  def("number->string", (args) => {
-    const n = assertNumber(args[0], "number->string");
-    const radix = args.length >= 2 ? assertNumber(args[1], "number->string") : 10;
-    if (radix === 10) return makeString(n.toString());
-    return makeString(Math.floor(n).toString(radix));
-  });
+  // Type conversion (kept here, primary definitions are at lines 451 and 462)
 
   // Misc
   def("void", () => UNDEFINED);
@@ -1386,23 +1380,6 @@ export function makePrimitives(): Map<string, SchemeVal> {
     const lst = listToArray(args[0]).map((a) => assertString(a, "string-join"));
     const sep = args.length >= 2 ? assertString(args[1], "string-join") : "";
     return makeString(lst.join(sep));
-  });
-
-  def("string->number", (args) => {
-    if (args.length < 1) throw new SchemeError("string->number: expected at least 1 argument");
-    const s = assertString(args[0], "string->number");
-    const radix = args.length >= 2 ? assertNumber(args[1], "string->number") : 10;
-    if (s === "") return FALSE;
-    if (radix === 10) {
-      const n = Number(s);
-      if (isNaN(n) && s !== "nan" && s !== "+nan.0" && s !== "-nan.0") return FALSE;
-      if (s === "+inf.0") return makeNumber(Infinity, false);
-      if (s === "-inf.0") return makeNumber(-Infinity, false);
-      return makeNumber(n, !s.includes(".") && !s.includes("e") && !s.includes("E"));
-    }
-    const n = parseInt(s, radix);
-    if (isNaN(n)) return FALSE;
-    return makeNumber(n, true);
   });
 
   def("boolean->string", (args) => {
